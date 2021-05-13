@@ -1,0 +1,56 @@
+﻿@using OrderRice.Model
+@using OrderRice.Service
+@inject OrderRiceService orderRiceService
+
+<textarea rows="6" @bind="@_strMenu"></textarea>
+<input type="button" class="btn btn-success" value="Add" @onclick="HandleClickAddMenu" />
+
+
+@code {
+    int GiaComMacDinh { get; set; } = 22;
+    [Parameter]
+    public EventCallback<string> OnEventChange { get; set; }
+
+    string _strMenu { get; set; }
+    List<Dish> dishes { get; set; } = new();
+
+    void ConvertStringToListDish()
+    {
+        int _lengthOfstrMenu = _strMenu.Length;
+        int firtchar = 0;
+
+        if(_strMenu[_lengthOfstrMenu - 1] != '\n')
+        {
+            _strMenu += '\n';//algo below must have \n in last character pleeee
+            _lengthOfstrMenu++;
+        }
+
+        for (int i = 0; i < _lengthOfstrMenu; i++)
+        {
+            //Dish must be > 2 character
+            if (_strMenu[i]=='\n' && i - firtchar > 2)
+            {
+                Dish _dish = new()
+                {
+                    id = Guid.NewGuid().ToString(),
+                    name = _strMenu.Substring(firtchar, i - firtchar),
+                    note = "",
+                    gia = GiaComMacDinh
+                };
+                dishes.Add(_dish);
+                firtchar = i + 1;//skip \n
+            }
+        }
+    }
+
+    async void HandleClickAddMenu()
+    {
+        ConvertStringToListDish();
+        foreach (var _dish in dishes)
+        {
+            await orderRiceService.AddDishAsync(_dish);
+        }
+        await OnEventChange.InvokeAsync("hehe");
+        _strMenu = "";
+    }
+}

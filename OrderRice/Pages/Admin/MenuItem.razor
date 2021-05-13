@@ -1,0 +1,90 @@
+﻿@using OrderRice.Model
+@using OrderRice.Service
+@inject OrderRiceService orderRiceService
+
+<tr>
+    <td>@Dish.name</td>
+
+    @if (!isEditingPrice)
+    {
+        <td>
+            @_strGia
+            <input type="button" class="btn btn-info" value="Edit" @onclick="HandleClickEditPrice" />
+        </td>
+    }
+    else
+    {
+        <td>
+            <input type="text"
+                   placeholder=@_strGia
+                   @bind-value="_strGia" @bind-value:event="oninput" />
+            <input type="button" class="btn btn-success" value="OK" @onclick="EditPrice" />
+            <input type="button" class="btn btn-danger" value="Cancel" @onclick="HandleClickEditPrice" />
+        </td>
+    }
+
+    <td class="" style="width:10%;">
+        <input type="button" class="btn btn-danger" value="Delete" @onclick="DeleteDish" />
+    </td>
+</tr>
+
+@code {
+    [Parameter]
+    public Dish Dish { get; set; }
+    [Parameter]
+    public EventCallback<string> OnEventChange { get; set; }
+
+    string _strGia { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _strGia = Dish.gia.ToString();
+    }
+
+    bool isEditingPrice { get; set; } = false;
+    string tempPrice { get; set; }
+
+    //when user click Edit button
+    void HandleClickEditPrice()
+    {
+        if (!isEditingPrice)
+        {
+            isEditingPrice = true;
+            tempPrice = _strGia;
+        }
+        else
+        {
+            _strGia = tempPrice;
+            isEditingPrice = false;
+        }
+    }
+
+    //when user click OK -> EDIT
+    async void EditPrice()
+    {
+        Dish.gia = Int32.Parse(_strGia);
+
+        bool result = await orderRiceService.UpdateDishAsync(Dish);
+        if (result)
+        {
+            isEditingPrice = false;
+            await OnEventChange.InvokeAsync(Dish.id);
+        }
+        else
+        {
+            //TODO: show message error: edit that bai
+        }
+    }
+
+    async void DeleteDish()
+    {
+        bool result = await orderRiceService.DeleteDishAsync(Dish.id);
+        if (result)
+        {
+            await OnEventChange.InvokeAsync(Dish.id);
+        }else
+        {
+            //TODO: show message error: delete that bai
+        }
+    }
+}

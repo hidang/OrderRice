@@ -1,0 +1,114 @@
+﻿@using OrderRice.Model
+@using OrderRice.Service
+
+@inject OrderRiceService orderRiceService
+
+<h1>Đặt cơm</h1>
+<hr />
+
+@if (dishs == null)
+{
+    <p><em>Loading dishes...</em></p> }
+else
+{
+    @if (dishs.Count > 0)
+    {
+        <p>Menu Updated: ../../2021</p>
+        <p>Tên: <input @bind-value="@Name" /></p>
+        <p>Chọn món ăn:</p>
+        <DishItemList Dishs="@dishs" OnClickDish="@OnClickDish" />
+        <p>
+            @(Name + (Name != null?": ":null))
+            @foreach (string idDish in idDishSelecteds)
+            {
+                Dish tempDish = dishs.SingleOrDefault(item => item.id == idDish);
+                @(tempDish.name + " ")
+            }
+            @*Tổng tiền: null*@
+        </p>
+
+        <p>Ghi chú: <input @bind-value="@Note" /></p>
+        @if (!isOrdered)
+        {
+            bool isSubmit = (Name?.Length >= 2 && idDishSelecteds.Count > 0) ? true : false;
+            <input type="button" disabled="@(!isSubmit)" class="btn btn-success" value="Đặt" @onclick="HandleUserSubmit" />
+        }else
+        {
+            <p>Dat com thanh cong xin dung dat lai, chua check trung ten</p>
+        }
+    }
+    else
+    {
+        <p>Chưa có thực đơn hôm nay!</p>
+    }
+}
+
+@code{
+    List<Dish> dishs = new() { };
+    List<string> idDishSelecteds = new() { };
+    string Name { get; set; }
+    string Note { get; set; }
+    bool isOrdered { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dishs = await orderRiceService.GetDishAsync();
+    }
+
+    void OnClickDish(string _idDishSelected)
+    {
+        foreach (var idDish in idDishSelecteds)
+        {
+            if (idDish == _idDishSelected)
+            {
+                idDishSelecteds.Remove(idDish);
+                return;
+            }
+        }
+        idDishSelecteds.Add(_idDishSelected);
+    }
+
+    int SumPriceOrder()
+    {
+        int tempSum = 0;
+        {
+            foreach (var idDish in idDishSelecteds)
+            {
+                foreach (var dish in dishs)
+                {
+                    if (dish.id == idDish)
+                    {
+                        tempSum += dish.gia;
+                    }
+                }
+            }
+        }
+        return tempSum;
+    }
+
+    async void HandleUserSubmit()
+    {
+        User temp_user = new User()
+        {
+            id = Guid.NewGuid().ToString(),
+            name = Name,
+            dish = string.Join(",", idDishSelecteds),
+            note = Note,
+            tongTien = SumPriceOrder(),
+            tienDaNhan = 0
+        };
+        bool result = await orderRiceService.AddUserAsync(temp_user);
+        if (result)
+        {
+            isOrdered = true;
+        }
+        else
+        {
+            isOrdered = false;
+            //Debug.WriteLine(temp_todo);
+            //TODO: show message error: add todo fail
+        }
+        StateHasChanged();
+    }
+}
+

@@ -1,0 +1,14 @@
+﻿@using OrderRice.Model
+
+@foreach (var dish in Dishs)
+{
+    <DishItem Dish="@dish" OnClickDish="@OnClickDish"/>
+}
+
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnClickDish { get; set; }
+    [Parameter]
+    public List<Dish> Dishs { get; set; }
+}

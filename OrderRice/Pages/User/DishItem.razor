@@ -1,0 +1,18 @@
+﻿@using OrderRice.Model
+
+<div>
+    <input type="checkbox" @onchange="eventArgs => { HandleCheckboxDish(); }" />
+    <label>@Dish.name</label>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnClickDish { get; set; }
+    [Parameter]
+    public Dish Dish { get; set; }
+
+    void HandleCheckboxDish()
+    {
+        OnClickDish.InvokeAsync(Dish.id);
+    }
+}

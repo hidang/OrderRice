@@ -1,0 +1,94 @@
+﻿@using OrderRice.Model
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>
+                <input type="button" class="btn btn-info" value="Update" @onclick="HandleClickUpdate" />
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Tiền đã nhận:</td>
+            <td>@TienDaNhan k</td>
+        </tr>
+        <tr>
+            <td>Tiền cần thối:</td>
+            <td>ten/...k | ten/...k | tobesangmailam</td>
+        </tr>
+        <tr>
+            <td><b>Số lượng:</b></td>
+            <td>@SoLuongDish</td>
+        </tr>
+        <tr>
+            <td><b>Tổng bill:</b></td>
+            <td>@TongBill k</td>
+        </tr>
+        <tr>
+            <td><b>Output:</b></td>
+            <td>@strOutput</td>
+        </tr>
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public List<Dish> Dishs { get; set; }
+    [Parameter]
+    public List<User> Users { get; set; }
+    [Parameter]
+    public EventCallback<string> OnEventChange { get; set; }
+
+    int TienDaNhan { get; set; } = 0;
+    int TongBill { get; set; } = 0;
+    string strOutput { get; set; } = "";
+    int SoLuongDish { get; set; } = 0;
+
+    void CreateReport()
+    {
+        TienDaNhan = 0;
+        TongBill = 0;
+        strOutput = "";
+        SoLuongDish = 0;
+        string[] idDishs = {""};
+        int[] countDishs = new int[Dishs.Count];
+        foreach (var user in Users)
+        {
+            TienDaNhan += user.tienDaNhan;
+            TongBill += user.tongTien;
+            idDishs.Concat(user.dish.Split(","));
+        }
+        int i = 0;
+        foreach (var dish in Dishs)
+        {
+            foreach (var id in idDishs)
+            {
+                if (dish.id == id) countDishs[i]++;
+            }
+            i++;
+        }
+        i = 0;
+        foreach (var dish in Dishs)
+        {
+            if(countDishs[i] > 0)
+            {
+                strOutput = strOutput + dish.name + ": " + countDishs[i] + '\n';
+                SoLuongDish += countDishs[i];
+            }
+            i++;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        CreateReport();
+    }
+    void HandleClickUpdate()
+    {
+        CreateReport();
+        OnEventChange.InvokeAsync("hehe");
+    }
+}

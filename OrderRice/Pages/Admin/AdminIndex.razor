@@ -1,0 +1,75 @@
+﻿@page "/admin"
+@using OrderRice.Model
+@using OrderRice.Service
+@using OrderRice.Pages.Admin
+
+@inject OrderRiceService orderRiceService
+
+<h1>Admin</h1>
+<hr />
+
+@if (!isLogin)
+{
+    <p>Key: <input type="password" @bind-value="@Key" /></p>
+    <input type="button" class="btn btn-success" value="Login" @onclick="HandleAdminLogin" />
+}
+else
+{
+    <AddMenu OnEventChange="@OnEventChangeDish" />
+    <ListMenu Dishs="@dishs" OnEventChange="@OnEventChangeDish" />
+    <ListUser Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
+    <ReportTable Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser"/>
+    <input type="button" class="btn btn-danger" value="Delete All Menu, All User Order" @onclick="HandleDeleteAllMenuAllUser" />
+}
+
+@code {
+    string Password { get; set; } = "a";
+    string Key { get; set; }
+    bool isLogin { get; set; } = false;
+
+    List<Dish> dishs = new() { };
+    List<User> users = new() { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        dishs = await orderRiceService.GetDishAsync();
+        users = await orderRiceService.GetUserAsync();
+    }
+
+    void HandleAdminLogin()
+    {
+        if (Key == Password)
+        {
+            isLogin = true;
+        }
+        else
+        {
+            @*TODO: show message sai password*@
+        }
+    }
+
+    async void OnEventChangeDish(string idDish)
+    {
+        dishs = new();
+        dishs = await orderRiceService.GetDishAsync();
+    }
+
+    async void OnEventChangeUser(string idUser)
+    {
+        users = new();
+        users = await orderRiceService.GetUserAsync();
+    }
+
+    async void HandleDeleteAllMenuAllUser()
+    {
+        await orderRiceService.DeleteAllDishAsync();
+        await orderRiceService.DeleteAllUserAsync();
+        dishs = new();
+        users = new();
+    }
+
+    async void OnClickAddMenu()
+    {
+        dishs = await orderRiceService.GetDishAsync();
+    }
+}

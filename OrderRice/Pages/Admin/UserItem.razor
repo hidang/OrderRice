@@ -1,0 +1,179 @@
+﻿@using OrderRice.Model
+@using OrderRice.Service
+@inject OrderRiceService orderRiceService
+
+<tr>
+    <td>@User.name</td>
+    <td>@_strDishs</td>
+    <td>@User.note</td>
+
+    @if (!isEditingTongTien)
+    {
+        <td>
+            @User.tongTien
+            <input type="button" class="btn btn-info" value="Edit" @onclick="HandleClickEditTongTien" />
+        </td>
+    }
+    else
+    {
+        <td>
+            <input type="text"
+                   placeholder=@_strTongTien
+                   @bind-value="_strTongTien" @bind-value:event="oninput" />
+            <input type="button" class="btn btn-success" value="OK" @onclick="EditTongTien" />
+            <input type="button" class="btn btn-danger" value="Cancel" @onclick="HandleClickEditTongTien" />
+        </td>
+    }
+
+
+    @if (!isEditingTienDaNhan)
+    {
+        <td>
+            @User.tienDaNhan
+            <input type="button" class="btn btn-info" value="Edit" @onclick="HandleClickEditTienDaNhan" />
+            <input type="button" class="btn btn-warning" value="Nhanh" @onclick="EditTienDaNhanNhanh" />
+        </td>
+    }
+    else
+    {
+        <td>
+            <input type="text"
+                   placeholder=@_strTienDaNhan
+                   @bind-value="_strTienDaNhan" @bind-value:event="oninput" />
+            <input type="button" class="btn btn-success" value="OK" @onclick="EditTienDaNhan" />
+            <input type="button" class="btn btn-danger" value="Cancel" @onclick="HandleClickEditTienDaNhan" />
+        </td>
+    }
+
+    <td class="" style="width:10%;">
+        <input type="button" class="btn btn-danger" value="Delete" @onclick="DeleteUser" />
+    </td>
+</tr>
+
+@code {
+    [Parameter]
+    public User User { get; set; }
+    [Parameter]
+    public List<Dish> Dishs { get; set; }
+    [Parameter]
+    public EventCallback<string> OnEventChange { get; set; }
+    string _strDishs { get; set; } = "";
+    @*---------------TongTienEdit------------------------*@
+    bool isEditingTongTien { get; set; } = false;
+    string _strTongTien { get; set; }
+    string tempTongTien { get; set; }
+
+    //when user click Edit button
+    void HandleClickEditTongTien()
+    {
+        if (!isEditingTongTien)
+        {
+            isEditingTongTien = true;
+            tempTongTien = _strTongTien;
+        }
+        else
+        {
+            _strTongTien = tempTongTien;
+            isEditingTongTien = false;
+        }
+    }
+    //when user click OK -> EDIT
+    async void EditTongTien()
+    {
+        User.tongTien = Int32.Parse(_strTongTien);
+
+        bool result = await orderRiceService.UpdateUserAsync(User);
+        if (result)
+        {
+            isEditingTongTien = false;
+            await OnEventChange.InvokeAsync(User.id);
+        }
+        else
+        {
+            //TODO: show message error: edit that bai
+        }
+    }
+    @*---------------TienDaNhan--------------------*@
+bool isEditingTienDaNhan { get; set; } = false;
+string _strTienDaNhan { get; set; }
+string tempTienDaNhan { get; set; }
+
+//when user click Edit button
+void HandleClickEditTienDaNhan()
+{
+    if (!isEditingTienDaNhan)
+    {
+        isEditingTienDaNhan = true;
+        tempTienDaNhan = _strTienDaNhan;
+    }
+    else
+    {
+        _strTienDaNhan = tempTienDaNhan;
+        isEditingTienDaNhan = false;
+    }
+}
+//when user click OK -> EDIT
+async void EditTienDaNhan()
+{
+    User.tienDaNhan = Int32.Parse(_strTienDaNhan);
+
+    bool result = await orderRiceService.UpdateUserAsync(User);
+
+    if (result)
+    {
+        isEditingTienDaNhan = false;
+        await OnEventChange.InvokeAsync(User.id);
+    }
+    else
+    {
+        //TODO: show message error: edit that bai
+    }
+}
+async void EditTienDaNhanNhanh()
+{
+    User.tienDaNhan = User.tongTien;
+
+    bool result = await orderRiceService.UpdateUserAsync(User);
+
+    if (result)
+    {
+        isEditingTienDaNhan = false;
+        await OnEventChange.InvokeAsync(User.id);
+    }
+    else
+    {
+        //TODO: show message error: edit that bai
+    }
+}
+//------------------------------------------------------
+protected override void OnInitialized()
+{
+    _strTongTien = User.tongTien.ToString();
+    _strTienDaNhan = User.tienDaNhan.ToString();
+
+    //create Name of dish by id dish(User.dish)
+    string[] _idDish;
+    _idDish = User.dish.Split(",");
+    foreach(var id in _idDish)
+    {
+        foreach(var dish in Dishs)
+        {
+            if (dish.id == id) _strDishs = _strDishs + dish.name + ',';
+        }
+    }
+}
+
+//Delete User
+async void DeleteUser()
+{
+    bool result = await orderRiceService.DeleteUserAsync(User.id);
+    if (result)
+    {
+        await OnEventChange.InvokeAsync(User.id);
+    }
+    else
+    {
+        //TODO: show message error: delete that bai
+    }
+}
+}

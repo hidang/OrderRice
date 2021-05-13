@@ -1,0 +1,29 @@
+﻿@using OrderRice.Model
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Order</th>
+            <th>Note</th>
+            <th>Tổng tiền</th>
+            <th>Tiền đã nhận</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Users)
+        {
+            <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
+        }
+    </tbody>
+</table>
+
+
+@code {
+    [Parameter]
+    public List<Dish> Dishs { get; set; }
+    [Parameter]
+    public List<User> Users { get; set; }
+    [Parameter]
+    public EventCallback<string> OnEventChange { get; set; }
+}
