@@ -53,33 +53,20 @@
         TongBill = 0;
         strOutput = "";
         SoLuongDish = 0;
-        string[] idDishs = {""};
-        int[] countDishs = new int[Dishs.Count];
+        List<string> nameDishs = new();
         foreach (var user in Users)
         {
             TienDaNhan += user.tienDaNhan;
             TongBill += user.tongTien;
-            idDishs.Concat(user.dish.Split(","));
-        }
-        int i = 0;
-        foreach (var dish in Dishs)
-        {
-            foreach (var id in idDishs)
+            foreach (var dish in user.dishs)
             {
-                if (dish.id == id) countDishs[i]++;
+                nameDishs.Add(dish.name);
+                SoLuongDish++;
             }
-            i++;
         }
-        i = 0;
-        foreach (var dish in Dishs)
-        {
-            if(countDishs[i] > 0)
-            {
-                strOutput = strOutput + dish.name + ": " + countDishs[i] + '\n';
-                SoLuongDish += countDishs[i];
-            }
-            i++;
-        }
+        @*var userDishOrderd = Users.SelectMany(c => c.dish.Split(','));*@
+        var distCount = nameDishs.GroupBy(c => c).Select(c => $"{c.Count()} phần {c.Key}");
+        strOutput = String.Join(", ", distCount);
     }
 
     protected override void OnInitialized()

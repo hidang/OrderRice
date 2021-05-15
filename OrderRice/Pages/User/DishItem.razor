@@ -1,7 +1,7 @@
 ﻿@using OrderRice.Model
 
 <div>
-    <input type="checkbox" @onchange="eventArgs => { HandleCheckboxDish(); }" />
+    <input type="checkbox" @bind="@isCheck" @onclick="eventArgs => { HandleCheckboxDish(); }" />
     <label>@Dish.name</label>
 </div>
 
@@ -11,8 +11,14 @@
     [Parameter]
     public Dish Dish { get; set; }
 
+    bool isCheck { get; set; } = false;
+
     void HandleCheckboxDish()
     {
         OnClickDish.InvokeAsync(Dish.id);
+    }
+    public void Refesh()
+    {
+        isCheck = false;
     }
 }

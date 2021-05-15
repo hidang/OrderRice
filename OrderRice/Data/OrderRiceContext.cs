@@ -11,5 +11,9 @@ namespace OrderRice.Data
         }
         public DbSet<User> User { get; set; }
         public DbSet<Dish> Dish { get; set; }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+ 
+        //}
     }
 }

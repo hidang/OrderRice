@@ -14,27 +14,45 @@ else
     @if (dishs.Count > 0)
     {
         <p>Menu Updated: ../../2021</p>
-        <p>Tên: <input @bind-value="@Name" /></p>
+
+        @if (isOrdered)
+        {
+            <p>Tên: @Name</p>
+        }
+        else
+        {
+            <p>Tên: <input type="text" @bind="@Name" @bind:event="oninput" /></p>
+        }
+
         <p>Chọn món ăn:</p>
-        <DishItemList Dishs="@dishs" OnClickDish="@OnClickDish" />
+        <DishItemList @bind-DishSelecteds="DishSelecteds" Dishs="@dishs" />
         <p>
             @(Name + (Name != null?": ":null))
-            @foreach (string idDish in idDishSelecteds)
+            @foreach (var dish in DishSelecteds)
             {
-                Dish tempDish = dishs.SingleOrDefault(item => item.id == idDish);
-                @(tempDish.name + " ")
+                @(dish.name + " ")
             }
             @*Tổng tiền: null*@
         </p>
 
-        <p>Ghi chú: <input @bind-value="@Note" /></p>
+        @if (isOrdered)
+        {
+            <p>Ghi chú: @Note</p>
+        }
+        else
+        {
+            <p>Ghi chú: <input @bind-value="@Note" /></p>
+        }
+
         @if (!isOrdered)
         {
-            bool isSubmit = (Name?.Length >= 2 && idDishSelecteds.Count > 0) ? true : false;
+            bool isSubmit = (Name?.Length >= 2 && DishSelecteds.Count > 0) ? true : false;
             <input type="button" disabled="@(!isSubmit)" class="btn btn-success" value="Đặt" @onclick="HandleUserSubmit" />
-        }else
+        }
+        else
         {
-            <p>Dat com thanh cong xin dung dat lai, chua check trung ten</p>
+            <a class="mr-2">Đặt cơm thành công!</a>
+            <input type="button" class="btn btn-info my-2" value="Đặt giùm người khác" @onclick="HandleClickDatGium" />
         }
     }
     else
@@ -44,8 +62,8 @@ else
 }
 
 @code{
-    List<Dish> dishs = new() { };
-    List<string> idDishSelecteds = new() { };
+    List<Dish> dishs = new();
+    List<Dish> DishSelecteds = new();
     string Name { get; set; }
     string Note { get; set; }
     bool isOrdered { get; set; } = false;
@@ -55,32 +73,13 @@ else
         dishs = await orderRiceService.GetDishAsync();
     }
 
-    void OnClickDish(string _idDishSelected)
-    {
-        foreach (var idDish in idDishSelecteds)
-        {
-            if (idDish == _idDishSelected)
-            {
-                idDishSelecteds.Remove(idDish);
-                return;
-            }
-        }
-        idDishSelecteds.Add(_idDishSelected);
-    }
-
     int SumPriceOrder()
     {
         int tempSum = 0;
         {
-            foreach (var idDish in idDishSelecteds)
+            foreach (var dish in DishSelecteds)
             {
-                foreach (var dish in dishs)
-                {
-                    if (dish.id == idDish)
-                    {
-                        tempSum += dish.gia;
-                    }
-                }
+                tempSum += dish.gia;
             }
         }
         return tempSum;
@@ -92,7 +91,7 @@ else
         {
             id = Guid.NewGuid().ToString(),
             name = Name,
-            dish = string.Join(",", idDishSelecteds),
+            dishs = DishSelecteds,
             note = Note,
             tongTien = SumPriceOrder(),
             tienDaNhan = 0
@@ -105,10 +104,17 @@ else
         else
         {
             isOrdered = false;
+
             //Debug.WriteLine(temp_todo);
             //TODO: show message error: add todo fail
         }
-        StateHasChanged();
+    }
+    void HandleClickDatGium()
+    {
+        Name = "";
+        isOrdered = false;
+        DishSelecteds = new();
+        //_dishItemList.Refesh();
     }
 }
 

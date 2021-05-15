@@ -151,16 +151,13 @@ protected override void OnInitialized()
     _strTongTien = User.tongTien.ToString();
     _strTienDaNhan = User.tienDaNhan.ToString();
 
-    //create Name of dish by id dish(User.dish)
-    string[] _idDish;
-    _idDish = User.dish.Split(",");
-    foreach(var id in _idDish)
+    //get Name of dishs in User
+    foreach(var dish in User.dishs)
     {
-        foreach(var dish in Dishs)
-        {
-            if (dish.id == id) _strDishs = _strDishs + dish.name + ',';
-        }
+        _strDishs += dish.name + ",";
     }
+    if(_strDishs.Length > 0)
+        _strDishs = _strDishs.Remove(_strDishs.Length - 1);
 }
 
 //Delete User
