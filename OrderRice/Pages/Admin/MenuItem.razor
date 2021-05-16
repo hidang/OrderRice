@@ -7,26 +7,53 @@
 
     @if (!isEditingPrice)
     {
-        <td>
+        <td style="display: flex; align-content: center; justify-content: space-between;">
             @_strGia
-            <input type="button" class="btn btn-info" value="Edit" @onclick="HandleClickEditPrice" />
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       Class="ml-2"
+                       OnClick="HandleClickEditPrice">
+                Edit
+            </MudButton>
         </td>
     }
     else
     {
         <td>
-            <input type="text"
-                   placeholder=@_strGia
-                   @bind-value="_strGia" @bind-value:event="oninput" />
-            <input type="button" class="btn btn-success" value="OK" @onclick="EditPrice" />
-            <input type="button" class="btn btn-danger" value="Cancel" @onclick="HandleClickEditPrice" />
+            <MudTextField @bind-Value="_strGia"
+                          InputType="InputType.Number"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          AutoFocus="true"
+                          Immediate="true">
+            </MudTextField>
+
+            <MudButton Variant="Variant.Filled"
+                       Style="background-color: green; color: white;"
+                       Class="ml-2"
+                       OnClick="EditPrice">
+                OK
+            </MudButton>
+
+            <MudButton Variant="Variant.Filled"
+                       Style="background-color: darkred; color: white;"
+                       Class="ml-2"
+                       OnClick="HandleClickEditPrice">
+                Cancel
+            </MudButton>
         </td>
     }
 
     <td class="" style="width:10%;">
-        <input type="button" class="btn btn-danger" value="Delete" @onclick="DeleteDish" />
+        <MudButton Variant="Variant.Filled"
+                    Color="Color.Error"
+                    Class="mx-2"
+                    OnClick="DeleteDish">
+            Delete
+        </MudButton>
     </td>
 </tr>
+
 
 @code {
     [Parameter]

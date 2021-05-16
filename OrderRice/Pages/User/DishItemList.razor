@@ -1,16 +1,18 @@
 ﻿@using OrderRice.Model
+@using OrderRice.Service
+
+@inject OrderRiceService orderRiceService
 
 @foreach (var dish in Dishs)
 {
-    <div class="form-check">
-        <label class="form-check-label" for="defaultCheck1">
-            <input class="form-check-input" value="@(DishSelecteds.Contains(dish) ? true : false)" type="checkbox" @onchange="async eventArgs => { await UpdateDishSelecteds(dish, eventArgs.Value); }" />
-            @dish.name
-        </label>
-    </div>
+    <MudItem>
+        <DishItem @ref="_mudAnhNhat" dish="@dish" UpdateDishSelecteds="@(async () => { await UpdateDishSelecteds(dish); })" isChecked="@(DishSelecteds.Contains(dish) ? true : false)" />
+    </MudItem>
+    @*<input class="form-check-input" value="@(DishSelecteds.Contains(dish) ? true : false)" type="checkbox" @onchange="async eventArgs => { await UpdateDishSelecteds(dish, eventArgs.Value); }" />*@
 }
 
 @code {
+    DishItem _mudAnhNhat;
     [Parameter]
     public List<Dish> DishSelecteds { get; set; }
     [Parameter]
@@ -18,9 +20,9 @@
     [Parameter]
     public List<Dish> Dishs { get; set; }
 
-    async Task UpdateDishSelecteds(Dish dish, object checkedValue)
+    public async Task UpdateDishSelecteds(Dish dish)
     {
-        if ((bool)checkedValue)
+        if (!DishSelecteds.Contains(dish))
         {
             DishSelecteds.Add(dish);
         }
@@ -29,5 +31,14 @@
             DishSelecteds.Remove(dish);
         }
         await DishSelectedsChanged.InvokeAsync(DishSelecteds);
+    }
+
+    public async void Refesh()
+    {
+        Dishs = new();
+        Dishs = await orderRiceService.GetDishAsync();
+        DishSelecteds = new();
+        await DishSelectedsChanged.InvokeAsync(DishSelecteds);
+        _mudAnhNhat.Refesh();
     }
 }

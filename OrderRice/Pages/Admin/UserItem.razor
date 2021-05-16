@@ -1,5 +1,7 @@
 ﻿@using OrderRice.Model
 @using OrderRice.Service
+@implements IDisposable
+
 @inject OrderRiceService orderRiceService
 
 <tr>
@@ -11,42 +13,94 @@
     {
         <td>
             @User.tongTien
-            <input type="button" class="btn btn-info" value="Edit" @onclick="HandleClickEditTongTien" />
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       Class="ml-2"
+                       OnClick="HandleClickEditTongTien">
+                Edit
+            </MudButton>
         </td>
     }
     else
     {
-        <td>
-            <input type="text"
-                   placeholder=@_strTongTien
-                   @bind-value="_strTongTien" @bind-value:event="oninput" />
-            <input type="button" class="btn btn-success" value="OK" @onclick="EditTongTien" />
-            <input type="button" class="btn btn-danger" value="Cancel" @onclick="HandleClickEditTongTien" />
+        <td style="display: flex; align-content: center; justify-content: flex-end;">
+            <MudTextField @bind-Value="_strTongTien"
+                          InputType="InputType.Number"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          AutoFocus="true"
+                          Immediate="true">
+            </MudTextField>
+
+            <MudButton Variant="Variant.Filled"
+                       Style="background-color: green; color: white;"
+                       Class="ml-2"
+                       OnClick="EditTongTien">
+                OK
+            </MudButton>
+
+            <MudButton Variant="Variant.Filled"
+                       Style="background-color: darkred; color: white;"
+                       Class="ml-2"
+                       OnClick="HandleClickEditTongTien">
+                Cancel
+            </MudButton>
         </td>
     }
 
 
     @if (!isEditingTienDaNhan)
     {
-        <td>
+        <td style="display: flex; align-content: center; justify-content: flex-end;">
             @User.tienDaNhan
-            <input type="button" class="btn btn-info" value="Edit" @onclick="HandleClickEditTienDaNhan" />
-            <input type="button" class="btn btn-warning" value="Nhanh" @onclick="EditTienDaNhanNhanh" />
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       Class="ml-2"
+                       OnClick="HandleClickEditTienDaNhan">
+                Edit
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Warning"
+                       Class="ml-2"
+                       OnClick="EditTienDaNhanNhanh">
+                Nhanh
+            </MudButton>
         </td>
     }
     else
     {
         <td>
-            <input type="text"
-                   placeholder=@_strTienDaNhan
-                   @bind-value="_strTienDaNhan" @bind-value:event="oninput" />
-            <input type="button" class="btn btn-success" value="OK" @onclick="EditTienDaNhan" />
-            <input type="button" class="btn btn-danger" value="Cancel" @onclick="HandleClickEditTienDaNhan" />
+            <MudTextField @bind-Value="_strTienDaNhan"
+                          InputType="InputType.Number"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          AutoFocus="true"
+                          Immediate="true">
+            </MudTextField>
+
+            <MudButton Variant="Variant.Filled"
+                       Style="background-color: green; color: white;"
+                       Class="ml-2"
+                       OnClick="EditTienDaNhan">
+                OK
+            </MudButton>
+
+            <MudButton Variant="Variant.Filled"
+                       Style="background-color: darkred; color: white;"
+                       Class="ml-2"
+                       OnClick="HandleClickEditTienDaNhan">
+                Cancel
+            </MudButton>
         </td>
     }
 
     <td class="" style="width:10%;">
-        <input type="button" class="btn btn-danger" value="Delete" @onclick="DeleteUser" />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Error"
+                   Class="mx-2"
+                   OnClick="DeleteUser">
+            Delete
+        </MudButton>
     </td>
 </tr>
 
@@ -94,83 +148,99 @@
         }
     }
     @*---------------TienDaNhan--------------------*@
-bool isEditingTienDaNhan { get; set; } = false;
-string _strTienDaNhan { get; set; }
-string tempTienDaNhan { get; set; }
+    bool isEditingTienDaNhan { get; set; } = false;
+    string _strTienDaNhan { get; set; }
+    string tempTienDaNhan { get; set; }
 
-//when user click Edit button
-void HandleClickEditTienDaNhan()
-{
-    if (!isEditingTienDaNhan)
+    //when user click Edit button
+    void HandleClickEditTienDaNhan()
     {
-        isEditingTienDaNhan = true;
-        tempTienDaNhan = _strTienDaNhan;
+        if (!isEditingTienDaNhan)
+        {
+            isEditingTienDaNhan = true;
+            tempTienDaNhan = _strTienDaNhan;
+        }
+        else
+        {
+            _strTienDaNhan = tempTienDaNhan;
+            isEditingTienDaNhan = false;
+        }
     }
-    else
+    //when user click OK -> EDIT
+    async void EditTienDaNhan()
     {
-        _strTienDaNhan = tempTienDaNhan;
-        isEditingTienDaNhan = false;
-    }
-}
-//when user click OK -> EDIT
-async void EditTienDaNhan()
-{
-    User.tienDaNhan = Int32.Parse(_strTienDaNhan);
+        User.tienDaNhan = Int32.Parse(_strTienDaNhan);
 
-    bool result = await orderRiceService.UpdateUserAsync(User);
+        bool result = await orderRiceService.UpdateUserAsync(User);
 
-    if (result)
-    {
-        isEditingTienDaNhan = false;
-        await OnEventChange.InvokeAsync(User.id);
+        if (result)
+        {
+            isEditingTienDaNhan = false;
+            await OnEventChange.InvokeAsync(User.id);
+        }
+        else
+        {
+            //TODO: show message error: edit that bai
+        }
     }
-    else
+    async void EditTienDaNhanNhanh()
     {
-        //TODO: show message error: edit that bai
-    }
-}
-async void EditTienDaNhanNhanh()
-{
-    User.tienDaNhan = User.tongTien;
+        _strTienDaNhan = User.tongTien.ToString();
+        User.tienDaNhan = User.tongTien;
 
-    bool result = await orderRiceService.UpdateUserAsync(User);
+        bool result = await orderRiceService.UpdateUserAsync(User);
 
-    if (result)
-    {
-        isEditingTienDaNhan = false;
-        await OnEventChange.InvokeAsync(User.id);
+        if (result)
+        {
+            isEditingTienDaNhan = false;
+            await OnEventChange.InvokeAsync(User.id);
+        }
+        else
+        {
+            //TODO: show message error: edit that bai
+        }
     }
-    else
+    //------------------------------------------------------
+    protected override void OnInitialized()
     {
-        //TODO: show message error: edit that bai
-    }
-}
-//------------------------------------------------------
-protected override void OnInitialized()
-{
-    _strTongTien = User.tongTien.ToString();
-    _strTienDaNhan = User.tienDaNhan.ToString();
+        _strTongTien = User.tongTien.ToString();
+        _strTienDaNhan = User.tienDaNhan.ToString();
 
-    //get Name of dishs in User
-    foreach(var dish in User.dishs)
-    {
-        _strDishs += dish.name + ",";
+        //get Name of dishs in User
+        if (User.dishs != null)
+            foreach (var dish in User.dishs)
+            {
+                _strDishs += dish.name + ",";
+            }
+        if (_strDishs.Length > 0)
+            _strDishs = _strDishs.Remove(_strDishs.Length - 1);
     }
-    if(_strDishs.Length > 0)
-        _strDishs = _strDishs.Remove(_strDishs.Length - 1);
-}
 
-//Delete User
-async void DeleteUser()
-{
-    bool result = await orderRiceService.DeleteUserAsync(User.id);
-    if (result)
+    //Delete User
+    async void DeleteUser()
     {
-        await OnEventChange.InvokeAsync(User.id);
+        bool result = await orderRiceService.DeleteUserAsync(User.id);
+        if (result)
+        {
+            await OnEventChange.InvokeAsync(User.id);
+        }
+        else
+        {
+            //TODO: show message error: delete that bai
+        }
     }
-    else
+
+    //because delete this component
+    async void IDisposable.Dispose()
     {
-        //TODO: show message error: delete that bai
+        try
+        {
+            await OnEventChange.InvokeAsync("hehe");
+
+        }
+        catch
+        {
+
+        }
     }
-}
 }

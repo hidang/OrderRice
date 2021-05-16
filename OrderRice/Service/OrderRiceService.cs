@@ -60,7 +60,7 @@ namespace OrderRice.Service
         //get all User
         public async Task<List<User>> GetUserAsync()
         {
-            return await _context.User.ToListAsync();
+            return await _context.User.Include(c => c.dishs).ToListAsync();
         }
 
         //add User

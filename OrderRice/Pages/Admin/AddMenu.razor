@@ -2,9 +2,20 @@
 @using OrderRice.Service
 @inject OrderRiceService orderRiceService
 
-<textarea rows="6" @bind="@_strMenu"></textarea>
-<input type="button" class="btn btn-success" value="Add" @onclick="HandleClickAddMenu" />
-
+<MudItem xs="12" sm="6" md="6">
+    <MudTextField
+                  T="string"
+                  Label="Menu"
+                  Variant="Variant.Outlined"
+                  @bind-Text="@_strMenu"
+                  Lines="5" />
+</MudItem>
+<MudButton Variant="Variant.Filled"
+           Style="background-color: green; color: white;"
+           Class="my-2"
+           OnClick="HandleClickAddMenu">
+    ➕Thêm
+</MudButton>
 
 @code {
     int GiaComMacDinh { get; set; } = 22;
@@ -19,16 +30,16 @@
         int _lengthOfstrMenu = _strMenu.Length;
         int firtchar = 0;
 
-        if(_strMenu[_lengthOfstrMenu - 1] != '\n')
+        if (_strMenu[_lengthOfstrMenu - 1] != '\n')
         {
-            _strMenu += '\n';//algo below must have \n in last character pleeee
+            _strMenu += '\n';//algo below must have \n in last character, pleeee
             _lengthOfstrMenu++;
         }
 
         for (int i = 0; i < _lengthOfstrMenu; i++)
         {
             //Dish must be > 2 character
-            if (_strMenu[i]=='\n' && i - firtchar > 2)
+            if (_strMenu[i] == '\n' && i - firtchar > 2)
             {
                 Dish _dish = new()
                 {
@@ -45,12 +56,15 @@
 
     async void HandleClickAddMenu()
     {
-        ConvertStringToListDish();
-        foreach (var _dish in dishes)
+        if (_strMenu != "" && _strMenu != null)
         {
-            await orderRiceService.AddDishAsync(_dish);
+            ConvertStringToListDish();
+            foreach (var _dish in dishes)
+            {
+                await orderRiceService.AddDishAsync(_dish);
+            }
+            await OnEventChange.InvokeAsync("hehe");
+            _strMenu = "";
         }
-        await OnEventChange.InvokeAsync("hehe");
-        _strMenu = "";
     }
 }

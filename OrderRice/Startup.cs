@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OrderRice.Data;
 using OrderRice.Service;
+using MudBlazor.Services;
 
 namespace OrderRice
 {
@@ -35,6 +36,8 @@ namespace OrderRice
       //add Context Sqlite
       services.AddDbContext<OrderRiceContext>(options =>
           options.UseSqlite(Configuration.GetConnectionString("DefaultSQLiteConnection")));
+
+        services.AddMudServices();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

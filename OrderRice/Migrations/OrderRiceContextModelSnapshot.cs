@@ -15,12 +15,24 @@ namespace OrderRice.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.6");
 
+            modelBuilder.Entity("DishUser", b =>
+                {
+                    b.Property<string>("dishsid")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("usersid")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("dishsid", "usersid");
+
+                    b.HasIndex("usersid");
+
+                    b.ToTable("DishUser");
+                });
+
             modelBuilder.Entity("OrderRice.Model.Dish", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Userid")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("gia")
@@ -33,8 +45,6 @@ namespace OrderRice.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("id");
-
-                    b.HasIndex("Userid");
 
                     b.ToTable("Dish");
                 });
@@ -61,16 +71,19 @@ namespace OrderRice.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("OrderRice.Model.Dish", b =>
+            modelBuilder.Entity("DishUser", b =>
                 {
-                    b.HasOne("OrderRice.Model.User", null)
-                        .WithMany("dishs")
-                        .HasForeignKey("Userid");
-                });
+                    b.HasOne("OrderRice.Model.Dish", null)
+                        .WithMany()
+                        .HasForeignKey("dishsid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("OrderRice.Model.User", b =>
-                {
-                    b.Navigation("dishs");
+                    b.HasOne("OrderRice.Model.User", null)
+                        .WithMany()
+                        .HasForeignKey("usersid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
