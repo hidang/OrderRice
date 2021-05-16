@@ -1,6 +1,30 @@
 ﻿@using OrderRice.Model
 
-<table class="table table-bordered">
+<style>
+    #table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table td, #table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #table tr:hover {
+            background-color: #ddd;
+        }
+
+        #table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #4CAF50;
+            color: white;
+        }
+</style>
+
+<table id="table">
     <thead>
         <tr>
             <th>Dishes</th>
@@ -9,14 +33,12 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var dish in Dishs)
-        {
-            <MenuItem Dish="@dish" OnEventChange="@OnEventChange"/>
-        }
+            @foreach (var dish in Dishs)
+            {
+                <MenuItem Dish="@dish" OnEventChange="@OnEventChange" />
+            }
     </tbody>
 </table>
-
-
 @code {
     [Parameter]
     public List<Dish> Dishs { get; set; }

@@ -3,67 +3,105 @@
 
 @inject OrderRiceService orderRiceService
 
-<h1>Đặt cơm</h1>
+<MudText Typo="Typo.h3" Align="Align.Center">Đặt cơm trưa</MudText>
 <hr />
-
-@if (dishs == null)
-{
-    <p><em>Loading dishes...</em></p> }
-else
-{
-    @if (dishs.Count > 0)
-    {
-        <p>Menu Updated: ../../2021</p>
-
-        @if (isOrdered)
-        {
-            <p>Tên: @Name</p>
-        }
-        else
-        {
-            <p>Tên: <input type="text" @bind="@Name" @bind:event="oninput" /></p>
-        }
-
-        <p>Chọn món ăn:</p>
-        <DishItemList @bind-DishSelecteds="DishSelecteds" Dishs="@dishs" />
-        <p>
-            @(Name + (Name != null?": ":null))
-            @foreach (var dish in DishSelecteds)
+<MudPaper Square="true">
+    <MudContainer Style="display: flex; justify-content: center;">
+        <div>
+            @if (dishs == null)
             {
-                @(dish.name + " ")
+                <p><em>Loading dishes...</em></p> }
+            else
+            {
+                @if (dishs.Count > 0)
+                {
+                    <MudText Typo="Typo.subtitle1">Menu Updated: ../../2021</MudText>
+
+                    @if (isOrdered)
+                    {
+                        <MudText Typo="Typo.subtitle1">Tên: @Name</MudText>
+                    }
+                    else
+                    {
+                        @*<input type="text" @bind="@Name" @bind:event="oninput" />*@
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="Name"
+                                          Label="Tên:"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Immediate="true">
+                            </MudTextField>
+                        </MudItem>
+                    }
+
+                    <MudText Typo="Typo.subtitle1">Chọn món ăn:</MudText>
+
+                    <DishItemList @ref="_dishItemList" @bind-DishSelecteds="DishSelecteds" Dishs="@dishs" />
+                    
+                    @if (isOrdered)
+                    {
+                        <MudText Typo="Typo.subtitle1">Ghi chú: @Note</MudText>
+                    }
+                    else
+                    {
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="Note"
+                                          Label="Ghi chú:"
+                                          Placeholder="Momo, Chuyển khoản..."
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Immediate="true">
+
+                            </MudTextField>
+                        </MudItem>
+                    }
+
+                    @if (!isOrdered)
+                    {
+                        bool isSubmit = (Name?.Length >= 2 && DishSelecteds.Count > 0) ? true : false;
+                        <MudButton Variant="Variant.Filled"
+                                   Style="background-color: green; color: white; width: 200px; height: 60px;"
+                                   Class="ma-2"
+                                   Disabled="@(!isSubmit)"
+                                   OnClick="HandleUserSubmit">
+                            Đặt
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.subtitle1" Style="display:flex; color: green;">
+                            @(Name + (Name != null?": ":null))
+                            @foreach (var dish in DishSelecteds)
+                            {
+                                @(dish.name + " ")
+                            }
+                            &nbsp;
+                            @(Note)
+                            @*Tổng tiền: *@
+                        </MudText>
+                        <MudAlert Severity="Severity.Success">Đặt cơm thành công!</MudAlert>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Info"
+                                   Style="width: 200px; height: 60px;"
+                                   Class="ma-2" OnClick="HandleClickDatGium">
+                            Đặt giùm người khác
+                        </MudButton>
+                    }
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5">Chưa có thực đơn hôm nay!</MudText>
+                }
             }
-            @*Tổng tiền: null*@
-        </p>
+        </div>
+    </MudContainer>
+</MudPaper>
 
-        @if (isOrdered)
-        {
-            <p>Ghi chú: @Note</p>
-        }
-        else
-        {
-            <p>Ghi chú: <input @bind-value="@Note" /></p>
-        }
-
-        @if (!isOrdered)
-        {
-            bool isSubmit = (Name?.Length >= 2 && DishSelecteds.Count > 0) ? true : false;
-            <input type="button" disabled="@(!isSubmit)" class="btn btn-success" value="Đặt" @onclick="HandleUserSubmit" />
-        }
-        else
-        {
-            <a class="mr-2">Đặt cơm thành công!</a>
-            <input type="button" class="btn btn-info my-2" value="Đặt giùm người khác" @onclick="HandleClickDatGium" />
-        }
-    }
-    else
-    {
-        <p>Chưa có thực đơn hôm nay!</p>
-    }
-}
 
 @code{
-    List<Dish> dishs = new();
-    List<Dish> DishSelecteds = new();
+    DishItemList _dishItemList;
+    List<Dish> dishs { get; set; } = new();
+    List<Dish> DishSelecteds { get; set; } = new();
     string Name { get; set; }
     string Note { get; set; }
     bool isOrdered { get; set; } = false;
@@ -104,17 +142,16 @@ else
         else
         {
             isOrdered = false;
-
-            //Debug.WriteLine(temp_todo);
             //TODO: show message error: add todo fail
         }
     }
     void HandleClickDatGium()
     {
         Name = "";
+        Note = "";
         isOrdered = false;
         DishSelecteds = new();
-        //_dishItemList.Refesh();
+        _dishItemList.Refesh();
     }
 }
 

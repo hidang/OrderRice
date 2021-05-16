@@ -13,7 +13,10 @@ namespace OrderRice.Data
         public DbSet<Dish> Dish { get; set; }
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
- 
+        //    modelBuilder
+        //    .Entity<User>()
+        //    .HasMany(p => p.dishs)
+        //    .WithMany(p => p.users);
         //}
     }
 }

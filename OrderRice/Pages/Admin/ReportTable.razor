@@ -1,13 +1,34 @@
 ﻿@using OrderRice.Model
 
-<table class="table table-bordered">
+<style>
+    #table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table td, #table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #table tr:hover {
+            background-color: #ddd;
+        }
+
+        #table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #4CAF50;
+            color: white;
+        }
+</style>
+
+<table id="table">
     <thead>
         <tr>
             <th>Title</th>
             <th>Content</th>
-            <th>
-                <input type="button" class="btn btn-info" value="Update" @onclick="HandleClickUpdate" />
-            </th>
         </tr>
     </thead>
     <tbody>
@@ -17,7 +38,7 @@
         </tr>
         <tr>
             <td>Tiền cần thối:</td>
-            <td>ten/...k | ten/...k | tobesangmailam</td>
+            <td>@TienCanThoi</td>
         </tr>
         <tr>
             <td><b>Số lượng:</b></td>
@@ -46,6 +67,7 @@
     int TongBill { get; set; } = 0;
     string strOutput { get; set; } = "";
     int SoLuongDish { get; set; } = 0;
+    string TienCanThoi { get; set; } = "";
 
     void CreateReport()
     {
@@ -53,16 +75,23 @@
         TongBill = 0;
         strOutput = "";
         SoLuongDish = 0;
+        TienCanThoi = "";
+
         List<string> nameDishs = new();
+        int tempTienThoi;
         foreach (var user in Users)
         {
             TienDaNhan += user.tienDaNhan;
             TongBill += user.tongTien;
-            foreach (var dish in user.dishs)
-            {
-                nameDishs.Add(dish.name);
-                SoLuongDish++;
-            }
+            if(user.dishs != null)
+                foreach (var dish in user.dishs)
+                {
+                    nameDishs.Add(dish.name);
+                    SoLuongDish++;
+                }
+            tempTienThoi = user.tienDaNhan - user.tongTien;
+            if (tempTienThoi > 0)
+                TienCanThoi += user.name + ": " + tempTienThoi.ToString() + "k | ";
         }
         @*var userDishOrderd = Users.SelectMany(c => c.dish.Split(','));*@
         var distCount = nameDishs.GroupBy(c => c).Select(c => $"{c.Count()} phần {c.Key}");
@@ -73,9 +102,10 @@
     {
         CreateReport();
     }
-    void HandleClickUpdate()
+
+    public void Refresh()
     {
         CreateReport();
-        OnEventChange.InvokeAsync("hehe");
+        @*StateHasChanged();*@
     }
 }

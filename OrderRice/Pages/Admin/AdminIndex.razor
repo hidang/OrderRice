@@ -1,29 +1,57 @@
 ﻿@page "/admin"
 @using OrderRice.Model
 @using OrderRice.Service
-@using OrderRice.Pages.Admin
 
 @inject OrderRiceService orderRiceService
 
-<h1>Admin</h1>
+<MudText Typo="Typo.h3" Align="Align.Center">Admin</MudText>
 <hr />
+<MudPaper Square="true">
+    <MudContainer Style="display: flex; justify-content: center;">
+        <div>
+            @if (!isLogin)
+            {
+                <div style="display: inline-flex; justify-content: center;">
+                    <MudItem xs="12">
+                        <MudTextField
+                            @bind-Value="Key"
+                            Label="Login"
+                            InputType="InputType.Password"
+                            Variant="Variant.Outlined"
+                            Margin="Margin.Dense">
+                        </MudTextField>
+                    </MudItem>
+                    <MudButton
+                               Variant="Variant.Filled"
+                               Style="background-color: green; color: white;" Class="ml-2"
+                               OnClick="HandleAdminLogin">
+                        Login
+                    </MudButton>
+                </div>
+            }
+            else
+            {
+                <AddMenu OnEventChange="@OnEventChangeDish" />
+                <ListMenu Dishs="@dishs" OnEventChange="@OnEventChangeDish" />
+                <ListUser Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
+                <ReportTable @ref="_reportTable" Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
+                <MudButton
+                           Variant="Variant.Filled"
+                           Color="Color.Error"
+                           Class="ma-2"
+                           OnClick="HandleDeleteAllMenuAllUser">
+                    Delete All Menu, All User Order
+                </MudButton>
+            }
+        </div>
+    </MudContainer>
+</MudPaper>
 
-@if (!isLogin)
-{
-    <p>Key: <input type="password" @bind-value="@Key" /></p>
-    <input type="button" class="btn btn-success" value="Login" @onclick="HandleAdminLogin" />
-}
-else
-{
-    <AddMenu OnEventChange="@OnEventChangeDish" />
-    <ListMenu Dishs="@dishs" OnEventChange="@OnEventChangeDish" />
-    <ListUser Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
-    <ReportTable Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser"/>
-    <input type="button" class="btn btn-danger" value="Delete All Menu, All User Order" @onclick="HandleDeleteAllMenuAllUser" />
-}
 
 @code {
+    ReportTable _reportTable;
     string Password { get; set; } = "a";
+
     string Key { get; set; }
     bool isLogin { get; set; } = false;
 
@@ -52,12 +80,14 @@ else
     {
         dishs = new();
         dishs = await orderRiceService.GetDishAsync();
+        _reportTable.Refresh();
     }
 
     async void OnEventChangeUser(string idUser)
     {
         users = new();
         users = await orderRiceService.GetUserAsync();
+        _reportTable.Refresh();
     }
 
     async void HandleDeleteAllMenuAllUser()
@@ -66,6 +96,7 @@ else
         await orderRiceService.DeleteAllUserAsync();
         dishs = new();
         users = new();
+        _reportTable.Refresh();
     }
 
     async void OnClickAddMenu()
