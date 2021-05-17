@@ -6,7 +6,7 @@
 <MudText Typo="Typo.h3" Align="Align.Center">Đặt cơm trưa</MudText>
 <hr />
 <MudPaper Square="true">
-    <MudContainer Style="display: flex; justify-content: center;">
+    <MudContainer >
         <div>
             @if (dishs == null)
             {
@@ -36,7 +36,14 @@
 
                     <MudText Typo="Typo.subtitle1">Chọn món ăn:</MudText>
 
-                    <DishItemList @ref="_dishItemList" @bind-DishSelecteds="DishSelecteds" Dishs="@dishs" />
+                    <div
+                        style="display: grid;
+                        grid-template-columns: auto auto auto;
+                        grid-gap: 10px;
+                        grid-template-columns: repeat(auto-fill, 186px);
+                        ">
+                        <DishItemList @ref="_dishItemList" @bind-DishSelecteds="DishSelecteds" Dishs="@dishs" />
+                    </div>
                     
                     @if (isOrdered)
                     {
