@@ -1,0 +1,20 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Order</th>
+            <th>Note</th>
+            <th>Tổng tiền</th>
+            <th>Tiền đã nhận</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @ChildContent
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

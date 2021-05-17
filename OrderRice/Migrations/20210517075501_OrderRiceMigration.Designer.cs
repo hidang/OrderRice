@@ -8,7 +8,7 @@ using OrderRice.Data;
 namespace OrderRice.Migrations
 {
     [DbContext(typeof(OrderRiceContext))]
-    [Migration("20210515080625_OrderRiceMigration")]
+    [Migration("20210517075501_OrderRiceMigration")]
     partial class OrderRiceMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace OrderRice.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("gia")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("giaDoAn")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("name")

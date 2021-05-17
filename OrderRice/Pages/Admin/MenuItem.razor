@@ -4,53 +4,96 @@
 
 <tr>
     <td>@Dish.name</td>
-
+    @*Price*@
     @if (!isEditingPrice)
     {
-        <td style="display: flex; align-content: center; justify-content: space-between;">
+        <td style="display: flex; align-items: center; justify-content: space-between;">
             @_strGia
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Success"
-                       Class="ml-2"
-                       OnClick="HandleClickEditPrice">
-                Edit
-            </MudButton>
+            <MudIconButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           Class="ml-2"
+                           OnClick="HandleClickEditPrice"
+                           Icon="@Icons.Material.Filled.Edit">
+                >
+            </MudIconButton>
+        </td>
+    }
+    else
+    {
+        <td style="display: flex; align-items: center;">
+            <MudItem sm="6" md="4">
+                <MudTextField @bind-Value="_strGia"
+                              InputType="InputType.Number"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              AutoFocus="true"
+                              Immediate="true">
+                </MudTextField>
+            </MudItem>
+            <MudIconButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           Class="ml-2"
+                           OnClick="EditPrice"
+                           Icon="@Icons.Material.Filled.Check">
+                >
+            </MudIconButton>
+
+            <MudIconButton Variant="Variant.Filled"
+                           Class="ml-2"
+                           OnClick="HandleClickEditPrice"
+                           Icon="@Icons.Material.Filled.Cancel">
+            </MudIconButton>
+        </td>
+    }
+    @*Price +Plus*@
+    @if (!isEditingPricePlus)
+    {
+        <td>
+            @_strGiaPlus
+            <MudIconButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           Class="ml-2"
+                           OnClick="HandleClickEditPricePlus"
+                           Icon="@Icons.Material.Filled.Edit">
+                >
+            </MudIconButton>
         </td>
     }
     else
     {
         <td>
-            <MudTextField @bind-Value="_strGia"
-                          InputType="InputType.Number"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          AutoFocus="true"
-                          Immediate="true">
-            </MudTextField>
+            <MudItem sm="6" md="4">
+                <MudTextField @bind-Value="_strGiaPlus"
+                              InputType="InputType.Number"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              AutoFocus="true"
+                              Immediate="true">
+                </MudTextField>
+            </MudItem>
+            <MudIconButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           Class="ml-2"
+                           OnClick="EditPricePlus"
+                           Icon="@Icons.Material.Filled.Check">
+                >
+            </MudIconButton>
 
-            <MudButton Variant="Variant.Filled"
-                       Style="background-color: green; color: white;"
-                       Class="ml-2"
-                       OnClick="EditPrice">
-                OK
-            </MudButton>
-
-            <MudButton Variant="Variant.Filled"
-                       Style="background-color: darkred; color: white;"
-                       Class="ml-2"
-                       OnClick="HandleClickEditPrice">
-                Cancel
-            </MudButton>
+            <MudIconButton Variant="Variant.Filled"
+                           Class="ml-2"
+                           OnClick="HandleClickEditPricePlus"
+                           Icon="@Icons.Material.Filled.Cancel">
+            </MudIconButton>
         </td>
     }
 
-    <td class="" style="width:10%;">
-        <MudButton Variant="Variant.Filled"
-                    Color="Color.Error"
-                    Class="mx-2"
-                    OnClick="DeleteDish">
-            Delete
-        </MudButton>
+    <td>
+        <MudIconButton Variant="Variant.Filled"
+                       Color="Color.Error"
+                       Class="mx-2"
+                       OnClick="DeleteDish"
+                       Icon="@Icons.Material.Filled.Delete">
+        </MudIconButton>
     </td>
 </tr>
 
@@ -62,12 +105,14 @@
     public EventCallback<string> OnEventChange { get; set; }
 
     string _strGia { get; set; }
+    string _strGiaPlus { get; set; }
 
     protected override void OnInitialized()
     {
         _strGia = Dish.gia.ToString();
+        _strGiaPlus = Dish.giaDoAn.ToString();
     }
-
+    //----------------Price----------------------
     bool isEditingPrice { get; set; } = false;
     string tempPrice { get; set; }
 
@@ -102,7 +147,42 @@
             //TODO: show message error: edit that bai
         }
     }
+    //---------------Price Plus----------------------
+    bool isEditingPricePlus { get; set; } = false;
+    string tempPricePlus { get; set; }
 
+    //when user click Edit button
+    void HandleClickEditPricePlus()
+    {
+        if (!isEditingPricePlus)
+        {
+            isEditingPricePlus = true;
+            tempPricePlus = _strGiaPlus;
+        }
+        else
+        {
+            _strGiaPlus = tempPricePlus;
+            isEditingPricePlus = false;
+        }
+    }
+
+    //when user click OK -> EDIT
+    async void EditPricePlus()
+    {
+        Dish.giaDoAn = Int32.Parse(_strGiaPlus);
+
+        bool result = await orderRiceService.UpdateDishAsync(Dish);
+        if (result)
+        {
+            isEditingPricePlus = false;
+            await OnEventChange.InvokeAsync(Dish.id);
+        }
+        else
+        {
+            //TODO: show message error: edit that bai
+        }
+    }
+    //----------------------------------------------
     async void DeleteDish()
     {
         bool result = await orderRiceService.DeleteDishAsync(Dish.id);

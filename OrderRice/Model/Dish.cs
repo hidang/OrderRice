@@ -12,6 +12,7 @@ namespace OrderRice.Model
         public string name { get; set; }
         public string note { get; set; }
         public int gia { get; set; }
+        public int giaDoAn { get; set; }
         public List<User> users { get; set; }
     }
 }

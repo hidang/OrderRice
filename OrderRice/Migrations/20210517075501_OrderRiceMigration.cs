@@ -13,7 +13,8 @@ namespace OrderRice.Migrations
                     id = table.Column<string>(type: "TEXT", nullable: false),
                     name = table.Column<string>(type: "TEXT", nullable: true),
                     note = table.Column<string>(type: "TEXT", nullable: true),
-                    gia = table.Column<int>(type: "INTEGER", nullable: false)
+                    gia = table.Column<int>(type: "INTEGER", nullable: false),
+                    giaDoAn = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -24,9 +24,9 @@ namespace OrderRice.Service
         }
 
         //add Dish
-        public async Task<bool> AddDishAsync(Dish dish)
+        public async Task<bool> AddDishAsync(List<Dish> dish)
         {
-            await _context.Dish.AddAsync(dish);
+            _context.Dish.AddRange(dish);
             await _context.SaveChangesAsync();
             return true;
         }

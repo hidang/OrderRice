@@ -1,0 +1,52 @@
+﻿<td style="display: inline-flex; align-items: center;">
+    <MudItem sm="6" md="4">
+        <MudTextField @bind-Value="_strContent"
+                        InputType="InputType.Number"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        AutoFocus="true"
+                        Immediate="true">
+        </MudTextField>
+    </MudItem>
+    <MudIconButton Variant="Variant.Filled"
+                    Color="Color.Success"
+                    Class="ml-2"
+                    OnClick="_EditContent"
+                    Icon="@Icons.Material.Filled.Check">
+        >
+    </MudIconButton>
+
+    <MudIconButton Variant="Variant.Filled"
+                    Class="ml-2"
+                    OnClick="_HandleClickEditContent"
+                    Icon="@Icons.Material.Filled.Cancel">
+    </MudIconButton>
+</td>
+
+@code {
+    [Parameter]
+    public string _strContent{ get; set; }
+    [Parameter]
+    public EventCallback<string> _strContentChanged { get; set; }
+    [Parameter]
+    public EventCallback EditContent { get; set; }
+    [Parameter]
+    public EventCallback HandleClickEditPrice { get; set; }
+
+    async void _EditContent()
+    {
+        await Update_strContentValue();
+        await EditContent.InvokeAsync();
+    }
+    async void _HandleClickEditContent()
+    {
+        await Update_strContentValue();
+        await HandleClickEditPrice.InvokeAsync();
+    }
+
+    async Task Update_strContentValue()
+    {
+        await _strContentChanged.InvokeAsync(_strContent);
+    }
+
+}

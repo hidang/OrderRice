@@ -1,47 +1,29 @@
 ﻿@using OrderRice.Model
+@using OrderRice.Pages.Admin.Components 
 
-<style>
-    #table {
-        border-collapse: collapse;
-        width: 100%;
+<MudText Typo="Typo.h5" Align="Align.Center">Thiếu tiền</MudText>
+<TableUser>
+    @foreach (var user in Users.Where(c => c.tienDaNhan < c.tongTien))
+    {
+        <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
     }
+</TableUser>
 
-        #table td, #table th {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
+<MudText Typo="Typo.h5" Align="Align.Center">Thối tiền</MudText>
+<TableUser>
+    @foreach (var user in Users.Where(c => c.tienDaNhan > c.tongTien))
+    {
+        <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
+    }
+</TableUser>
 
-        #table tr:hover {
-            background-color: #ddd;
-        }
-
-        #table th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #4CAF50;
-            color: white;
-        }
-</style>
-
-<table id="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Order</th>
-            <th>Note</th>
-            <th>Tổng tiền</th>
-            <th>Tiền đã nhận</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Users)
-        {
-            <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
-        }
-    </tbody>
-</table>
+<MudText Typo="Typo.h5" Align="Align.Center">Đưa đủ</MudText>
+<TableUser>
+    @foreach (var user in Users.Where(c => c.tienDaNhan == c.tongTien))
+    {
+        <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
+    }
+</TableUser>
 
 
 @code {

@@ -1,6 +1,7 @@
 ﻿@using OrderRice.Model
 @using OrderRice.Service
-@implements IDisposable
+@using OrderRice.Pages.Admin.Components
+
 
 @inject OrderRiceService orderRiceService
 
@@ -12,18 +13,22 @@
     @if (!isEditingTongTien)
     {
         <td>
-            @User.tongTien
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Success"
-                       Class="ml-2"
-                       OnClick="HandleClickEditTongTien">
-                Edit
-            </MudButton>
+            <div style="display: flex; align-items: center; justify-content: flex-end;">
+                @User.tongTien
+                <MudIconButton Variant="Variant.Filled"
+                    Color="Color.Success"
+                    Class="ml-2"
+                    OnClick="HandleClickEditTongTien"
+                    Icon="@Icons.Material.Filled.Edit">
+                >
+                </MudIconButton>
+            </div>
         </td>
     }
     else
     {
-        <td style="display: flex; align-content: center; justify-content: flex-end;">
+        <td>
+            @*<EditForm @bind-_strContent="_strTongTien" EditContext="@EditTongTien" HandleClickEditPrice="@HandleClickEditTongTien" />*@
             <MudTextField @bind-Value="_strTongTien"
                           InputType="InputType.Number"
                           Variant="Variant.Outlined"
@@ -51,20 +56,23 @@
 
     @if (!isEditingTienDaNhan)
     {
-        <td style="display: flex; align-content: center; justify-content: flex-end;">
-            @User.tienDaNhan
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Success"
-                       Class="ml-2"
-                       OnClick="HandleClickEditTienDaNhan">
-                Edit
-            </MudButton>
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Warning"
-                       Class="ml-2"
-                       OnClick="EditTienDaNhanNhanh">
-                Nhanh
-            </MudButton>
+        <td>
+            <div style="display: flex; align-items: center; justify-content: flex-end;">
+                        @User.tienDaNhan
+                <MudIconButton Variant="Variant.Filled"
+                        Color="Color.Success"
+                        Class="ml-2"
+                        OnClick="HandleClickEditTienDaNhan"
+                        Icon="@Icons.Material.Filled.Edit">
+                </MudIconButton>
+                <MudIconButton Variant="Variant.Filled"
+                        Color="Color.Warning"
+                        Class="ml-2"
+                        OnClick="EditTienDaNhanNhanh"
+                        Icon="@Icons.Material.Filled.FastForward">
+                    Nhanh
+                </MudIconButton>
+            </div>
         </td>
     }
     else
@@ -94,13 +102,14 @@
         </td>
     }
 
-    <td class="" style="width:10%;">
-        <MudButton Variant="Variant.Filled"
+    <td>
+        <MudIconButton Variant="Variant.Filled"
                    Color="Color.Error"
                    Class="mx-2"
-                   OnClick="DeleteUser">
-            Delete
-        </MudButton>
+                   OnClick="DeleteUser"
+                   Icon="@Icons.Material.Filled.Delete"
+                   >
+        </MudIconButton>
     </td>
 </tr>
 
@@ -118,7 +127,7 @@
     string tempTongTien { get; set; }
 
     //when user click Edit button
-    void HandleClickEditTongTien()
+    public void HandleClickEditTongTien()
     {
         if (!isEditingTongTien)
         {
@@ -132,7 +141,7 @@
         }
     }
     //when user click OK -> EDIT
-    async void EditTongTien()
+    public async void EditTongTien()
     {
         User.tongTien = Int32.Parse(_strTongTien);
 
@@ -231,7 +240,7 @@
     }
 
     //because delete this component
-    async void IDisposable.Dispose()
+    @*async void IDisposable.Dispose()
     {
         try
         {
@@ -242,5 +251,5 @@
         {
 
         }
-    }
+    }*@
 }

@@ -121,12 +121,16 @@
     int SumPriceOrder()
     {
         int tempSum = 0;
+
+        for (int i = 0; i < DishSelecteds.Count; i++)
         {
-            foreach (var dish in DishSelecteds)
-            {
-                tempSum += dish.gia;
-            }
+            if (i == 0) tempSum += dishs[i].gia;
+            else
+                {
+                    tempSum += dishs[i].giaDoAn;
+                }
         }
+
         return tempSum;
     }
 

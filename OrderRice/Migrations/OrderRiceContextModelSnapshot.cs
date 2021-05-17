@@ -38,6 +38,9 @@ namespace OrderRice.Migrations
                     b.Property<int>("gia")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("giaDoAn")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("name")
                         .HasColumnType("TEXT");
 

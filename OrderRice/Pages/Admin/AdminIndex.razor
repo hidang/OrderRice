@@ -1,8 +1,11 @@
 ﻿@page "/admin"
 @using OrderRice.Model
 @using OrderRice.Service
+@using OrderRice.Pages.Admin.Components
 
 @inject OrderRiceService orderRiceService
+@inject IDialogService DialogService
+@inject IDialogService Dialog
 
 <MudText Typo="Typo.h3" Align="Align.Center">Admin</MudText>
 <hr />
@@ -13,16 +16,14 @@
             {
                 <div style="display: inline-flex; justify-content: center;">
                     <MudItem xs="12">
-                        <MudTextField
-                            @bind-Value="Key"
-                            Label="Login"
-                            InputType="InputType.Password"
-                            Variant="Variant.Outlined"
-                            Margin="Margin.Dense">
+                        <MudTextField @bind-Value="Key"
+                                      Label="Login"
+                                      InputType="InputType.Password"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense">
                         </MudTextField>
                     </MudItem>
-                    <MudButton
-                               Variant="Variant.Filled"
+                    <MudButton Variant="Variant.Filled"
                                Style="background-color: green; color: white;" Class="ml-2"
                                OnClick="HandleAdminLogin">
                         Login
@@ -31,12 +32,32 @@
             }
             else
             {
-                <AddMenu OnEventChange="@OnEventChangeDish" />
+                <div style="display: inline-flex; justify-content: center;">
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="GiaCom"
+                                      Label="Giá cơm"
+                                      InputType="InputType.Text"
+                                      Variant="Variant.Text"
+                                      Margin="Margin.Dense"
+                                      Immediate="true">
+                        </MudTextField>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="GiaDoAn"
+                                      Label="Giá đồ ăn"
+                                      InputType="InputType.Text"
+                                      Variant="Variant.Text"
+                                      Margin="Margin.Dense"
+                                      class="ml-1"
+                                      Immediate="true">
+                        </MudTextField>
+                    </MudItem>
+                </div>
+                <AddMenu GiaCom="@GiaCom" GiaDoAn="@GiaDoAn" OnEventChange="@OnEventChangeDish" />
                 <ListMenu Dishs="@dishs" OnEventChange="@OnEventChangeDish" />
                 <ListUser Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
                 <ReportTable @ref="_reportTable" Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
-                <MudButton
-                           Variant="Variant.Filled"
+                <MudButton Variant="Variant.Filled"
                            Color="Color.Error"
                            Class="ma-2"
                            OnClick="HandleDeleteAllMenuAllUser">
@@ -49,6 +70,9 @@
 
 
 @code {
+    int GiaCom { get; set; } = 22;
+    int GiaDoAn { get; set; } = 18;
+
     ReportTable _reportTable;
     string Password { get; set; } = "a";
 
@@ -75,6 +99,10 @@
             @*TODO: show message sai password*@
         }
     }
+    void HandleEditGia()
+    {
+
+    }
 
     async void OnEventChangeDish(string idDish)
     {
@@ -92,11 +120,24 @@
 
     async void HandleDeleteAllMenuAllUser()
     {
-        await orderRiceService.DeleteAllDishAsync();
-        await orderRiceService.DeleteAllUserAsync();
-        dishs = new();
-        users = new();
-        _reportTable.Refresh();
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to delete Menu and User Order?");
+        parameters.Add("ButtonText", "Delete");
+        parameters.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        var dialog = DialogService.Show<Dialog>("Delete", parameters, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await orderRiceService.DeleteAllDishAsync();
+            await orderRiceService.DeleteAllUserAsync();
+            dishs = new();
+            users = new();
+            _reportTable.Refresh();
+            StateHasChanged();
+        }
     }
 
     async void OnClickAddMenu()

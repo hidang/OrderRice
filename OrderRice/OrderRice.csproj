@@ -10,8 +10,9 @@
     <Folder Include="Pages\User\" />
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Edit\" />
-    <Folder Include="Database\" />
     <Folder Include="wwwroot\css\" />
+    <Folder Include="Database\" />
+    <Folder Include="Pages\Admin\Components\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />

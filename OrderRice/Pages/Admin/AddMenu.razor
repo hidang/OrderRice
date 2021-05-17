@@ -2,7 +2,7 @@
 @using OrderRice.Service
 @inject OrderRiceService orderRiceService
 
-<MudItem xs="12" sm="6" md="6">
+<MudItem xs="12" sm="12" md="12">
     <MudTextField
                   T="string"
                   Label="Menu"
@@ -10,15 +10,21 @@
                   @bind-Text="@_strMenu"
                   Lines="5" />
 </MudItem>
-<MudButton Variant="Variant.Filled"
-           Style="background-color: green; color: white;"
-           Class="my-2"
-           OnClick="HandleClickAddMenu">
-    ➕Thêm
-</MudButton>
+<div style="display: flex; justify-content:flex-end;">
+    <MudButton Variant="Variant.Filled"
+            Style="background-color: green; color: white;"
+            Class="my-2"
+            OnClick="HandleClickAddMenu">
+        ➕Thêm
+    </MudButton>
+</div>
+
 
 @code {
-    int GiaComMacDinh { get; set; } = 22;
+    [Parameter]
+    public int GiaCom { get; set; }
+    [Parameter]
+    public int GiaDoAn { get; set; }
     [Parameter]
     public EventCallback<string> OnEventChange { get; set; }
 
@@ -46,7 +52,8 @@
                     id = Guid.NewGuid().ToString(),
                     name = _strMenu.Substring(firtchar, i - firtchar),
                     note = "",
-                    gia = GiaComMacDinh
+                    gia = GiaCom,
+                    giaDoAn = GiaDoAn
                 };
                 dishes.Add(_dish);
                 firtchar = i + 1;//skip \n
@@ -56,13 +63,11 @@
 
     async void HandleClickAddMenu()
     {
+        dishes = new();
         if (_strMenu != "" && _strMenu != null)
         {
             ConvertStringToListDish();
-            foreach (var _dish in dishes)
-            {
-                await orderRiceService.AddDishAsync(_dish);
-            }
+            await orderRiceService.AddDishAsync(dishes);
             await OnEventChange.InvokeAsync("hehe");
             _strMenu = "";
         }
