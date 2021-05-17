@@ -20,7 +20,10 @@
                                       Label="Login"
                                       InputType="InputType.Password"
                                       Variant="Variant.Outlined"
-                                      Margin="Margin.Dense">
+                                      Margin="Margin.Dense"
+                                      Immediate="true"
+                                      AutoFocus="true"
+                                      OnKeyPress="KeyPressLogin">
                         </MudTextField>
                     </MudItem>
                     <MudButton Variant="Variant.Filled"
@@ -79,13 +82,21 @@
     string Key { get; set; }
     bool isLogin { get; set; } = false;
 
-    List<Dish> dishs = new() { };
-    List<User> users = new() { };
+    List<Dish> dishs;
+    List<User> users;
 
     protected override async Task OnInitializedAsync()
     {
         dishs = await orderRiceService.GetDishAsync();
         users = await orderRiceService.GetUserAsync();
+    }
+
+    void KeyPressLogin(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            HandleAdminLogin();
+        }
     }
 
     void HandleAdminLogin()

@@ -8,8 +8,8 @@ using OrderRice.Data;
 namespace OrderRice.Migrations
 {
     [DbContext(typeof(OrderRiceContext))]
-    [Migration("20210517075501_OrderRiceMigration")]
-    partial class OrderRiceMigration
+    [Migration("20210517142814_OrderRice_Migration")]
+    partial class OrderRice_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -11,7 +11,7 @@
     <tbody>
         <tr>
             <td>Tiền đã nhận:</td>
-            <td>@TienDaNhan k</td>
+            <td>@(TienDaNhan)k</td>
         </tr>
         <tr>
             <td>Tiền cần thối:</td>
@@ -23,17 +23,23 @@
         </tr>
         <tr>
             <td><b>Tổng bill:</b></td>
-            <td>@TongBill k</td>
+            <td>@(TongBill)k</td>
+        </tr>
+        <tr>
+            <td><b>Còn thiếu:</b></td>
+            <td>@(TongBill - TienDaNhan < 0? 0: TongBill - TienDaNhan)k</td>
         </tr>
         <tr>
             <td><b>Output:</b></td>
             <td>
-                @strOutput
-                <MudIconButton Variant="Variant.Filled"
-                               Class="ml-2"
-                               OnClick="CopyTextToClipboard"
-                               Icon="@Icons.Material.Filled.ContentCopy">
-                </MudIconButton>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    @strOutput
+                    <MudIconButton Variant="Variant.Filled"
+                                   Class="ml-2"
+                                   OnClick="CopyTextToClipboard"
+                                   Icon="@Icons.Material.Filled.ContentCopy">
+                    </MudIconButton>
+                </div>
             </td>
         </tr>
     </tbody>
@@ -91,8 +97,11 @@
         @*var userDishOrderd = Users.SelectMany(c => c.dish.Split(','));*@
         var distCount = nameDishs.GroupBy(c => c).Select(c => $"{c.Count()} phần {c.Key}");
         strOutput = String.Join(", ", distCount);
-        var distPlusCount = nameDishsPlus.GroupBy(c => c).Select(c => $"{c.Count()} {c.Key}");
-        strOutput += " | Đồ ăn thêm: " + String.Join(", ", distPlusCount);
+        if (SoLuongDishPlus > 0)
+        {
+            var distPlusCount = nameDishsPlus.GroupBy(c => c).Select(c => $"{c.Count()} {c.Key}");
+            strOutput += " | Đồ ăn thêm: " + String.Join(", ", distPlusCount);
+        }
     }
 
     protected override void OnParametersSet()
@@ -108,6 +117,5 @@
     public void Refresh()
     {
         CreateReport();
-        @*StateHasChanged();*@
     }
 }

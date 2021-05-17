@@ -2,7 +2,7 @@
 
 namespace OrderRice.Migrations
 {
-    public partial class OrderRiceMigration : Migration
+    public partial class OrderRice_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

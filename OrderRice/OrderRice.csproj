@@ -11,7 +11,6 @@
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Edit\" />
     <Folder Include="wwwroot\css\" />
-    <Folder Include="Database\" />
     <Folder Include="Pages\Admin\Components\" />
   </ItemGroup>
   <ItemGroup>

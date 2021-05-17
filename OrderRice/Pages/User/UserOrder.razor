@@ -36,15 +36,14 @@
 
                     <MudText Typo="Typo.subtitle1">Chọn món ăn:</MudText>
 
-                    <div
-                        style="display: grid;
+                    <div style="display: grid;
                         grid-template-columns: auto auto auto;
                         grid-gap: 10px;
                         grid-template-columns: repeat(auto-fill, 186px);
                         ">
                         <DishItemList @ref="_dishItemList" @bind-DishSelecteds="DishSelecteds" Dishs="@dishs" />
                     </div>
-                    
+
                     @if (isOrdered)
                     {
                         <MudText Typo="Typo.subtitle1">Ghi chú: @Note</MudText>
@@ -54,7 +53,7 @@
                         <MudItem xs="12">
                             <MudTextField @bind-Value="Note"
                                           Label="Ghi chú:"
-                                          Placeholder="Momo, Chuyển khoản..."
+                                          Placeholder="Momo, Chuyển khoản...(mặc định là tiền mặt)"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           Immediate="true">
@@ -62,6 +61,10 @@
                             </MudTextField>
                         </MudItem>
                     }
+
+                    <MudText Typo="Typo.subtitle1" Style="display:flex; color: green;">
+                        Lưu ý: Đặt cho người khác thì bấm đặt lại rồi ghi tên người được đặt chứ không bấm 1 người 2 món ăn nha, bấm vậy admin hiểu là 1 người ăn 2 món (1 phần cơm) đó. Có tiền mặt thì đưa tiền mặt nha!
+                    </MudText>
 
                     @if (!isOrdered)
                     {
@@ -76,17 +79,20 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.subtitle1" Style="display:flex; color: green;">
-                            @(Name + (Name != null?": ":null))
-                            @foreach (var dish in DishSelecteds)
-                            {
-                                @(dish.name + " ")
-                            }
-                            &nbsp;
-                            @(Note)
-                            @*Tổng tiền: *@
-                        </MudText>
-                        <MudAlert Severity="Severity.Success">Đặt cơm thành công!</MudAlert>
+                        <MudAlert Severity="Severity.Success">
+                            Đặt cơm thành công!
+                            <MudText
+                                Typo="Typo.subtitle1"
+                                Style="display:flex; color: #594AE2;">
+                                @(Name + (Name != null?": ":null))
+                                @foreach (var dish in DishSelecteds)
+                                {
+                                    @(dish.name + " ")
+                                }
+                                &nbsp;@(@TongTien)k
+                                &nbsp;@(Note)
+                            </MudText>
+                        </MudAlert>
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Info"
                                    Style="width: 200px; height: 60px;"
@@ -112,6 +118,7 @@
     string Name { get; set; }
     string Note { get; set; }
     bool isOrdered { get; set; } = false;
+    int TongTien { get; set; } = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -126,23 +133,23 @@
         {
             if (i == 0) tempSum += dishs[i].gia;
             else
-                {
-                    tempSum += dishs[i].giaDoAn;
-                }
+            {
+                tempSum += dishs[i].giaDoAn;
+            }
         }
-
         return tempSum;
     }
 
     async void HandleUserSubmit()
     {
+        TongTien = SumPriceOrder();
         User temp_user = new User()
         {
             id = Guid.NewGuid().ToString(),
             name = Name,
             dishs = DishSelecteds,
             note = Note,
-            tongTien = SumPriceOrder(),
+            tongTien = TongTien,
             tienDaNhan = 0
         };
         bool result = await orderRiceService.AddUserAsync(temp_user);
