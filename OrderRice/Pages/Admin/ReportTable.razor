@@ -95,27 +95,27 @@
                 TienCanThoi += user.name + ": " + tempTienThoi.ToString() + "k | ";
         }
         @*var userDishOrderd = Users.SelectMany(c => c.dish.Split(','));*@
-        var distCount = nameDishs.GroupBy(c => c).Select(c => $"{c.Count()} phần {c.Key}");
-        strOutput = String.Join(", ", distCount);
-        if (SoLuongDishPlus > 0)
-        {
-            var distPlusCount = nameDishsPlus.GroupBy(c => c).Select(c => $"{c.Count()} {c.Key}");
-            strOutput += " | Đồ ăn thêm: " + String.Join(", ", distPlusCount);
-        }
-    }
-
-    protected override void OnParametersSet()
+    var distCount = nameDishs.GroupBy(c => c).Select(c => $"{c.Count()} phần {c.Key}");
+    strOutput = String.Join(", ", distCount);
+    if (SoLuongDishPlus > 0)
     {
-        CreateReport();
+        var distPlusCount = nameDishsPlus.GroupBy(c => c).Select(c => $"{c.Count()} {c.Key}");
+        strOutput += " | Đồ ăn thêm: " + String.Join(", ", distPlusCount);
     }
+}
 
-    private async Task CopyTextToClipboard()
-    {
-        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", strOutput);
-    }
+protected override void OnParametersSet()
+{
+    CreateReport();
+}
 
-    public void Refresh()
-    {
-        CreateReport();
-    }
+private async Task CopyTextToClipboard()
+{
+    await JSRuntime.InvokeVoidAsync("CopyToClipboard", strOutput);
+}
+
+public void Refresh()
+{
+    CreateReport();
+}
 }
