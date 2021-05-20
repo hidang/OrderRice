@@ -1,8 +1,6 @@
 ﻿@using OrderRice.Model
 @using OrderRice.Service
 @using OrderRice.Pages.Admin.Components
-
-
 @inject OrderRiceService orderRiceService
 
 <tr>
@@ -117,8 +115,6 @@
     [Parameter]
     public User User { get; set; }
     [Parameter]
-    public List<Dish> Dishs { get; set; }
-    [Parameter]
     public EventCallback<string> OnEventChange { get; set; }
     string _strDishs { get; set; } = "";
     @*---------------TongTienEdit------------------------*@
@@ -210,11 +206,11 @@
         }
     }
     //------------------------------------------------------
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         _strTongTien = User.tongTien.ToString();
         _strTienDaNhan = User.tienDaNhan.ToString();
-
+        _strDishs = "";
         //get Name of dishs in User
         if (User.dishs != null)
             foreach (var dish in User.dishs)
@@ -224,7 +220,6 @@
         if (_strDishs.Length > 0)
             _strDishs = _strDishs.Remove(_strDishs.Length - 1);
     }
-
     //Delete User
     async void DeleteUser()
     {

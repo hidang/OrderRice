@@ -5,7 +5,7 @@
 <TableUser>
     @foreach (var user in Users.Where(c => c.tienDaNhan < c.tongTien))
     {
-        <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
+        <UserItem User="@user" OnEventChange="@OnEventChange" />
     }
 </TableUser>
 
@@ -13,7 +13,7 @@
 <TableUser>
     @foreach (var user in Users.Where(c => c.tienDaNhan > c.tongTien))
     {
-        <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
+        <UserItem User="@user" OnEventChange="@OnEventChange" />
     }
 </TableUser>
 
@@ -21,7 +21,7 @@
 <TableUser>
     @foreach (var user in Users.Where(c => c.tienDaNhan == c.tongTien))
     {
-        <UserItem Dishs="@Dishs" User="@user" OnEventChange="@OnEventChange" />
+        <UserItem User="@user" OnEventChange="@OnEventChange" />
     }
 </TableUser>
 
