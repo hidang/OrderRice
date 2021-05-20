@@ -31,10 +31,9 @@
         </MudHidden>
     </MudAppBar>
 
-    <MudDrawer Color="Color.Success" @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
-        <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
-
-
+    <MudDrawer @bind-Open=_drawerOpen Elevation="25">
+        <MudDrawerHeader LinkToIndex="true">
+            <img src="/logo.png" height="88" class="mx-auto"/>
         </MudDrawerHeader>
         <NavMenu/>
     </MudDrawer>
