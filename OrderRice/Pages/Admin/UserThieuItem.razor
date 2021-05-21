@@ -1,0 +1,114 @@
+﻿@using OrderRice.Model
+@using OrderRice.Service
+@inject OrderRiceService orderRiceService
+
+<td>@userThieu.name</td>
+@if (!isEditingTienThieu)
+{
+    <td style="display: flex; align-items: center; justify-content: space-between;">
+        @_Tien
+        <MudIconButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       Class="ml-2"
+                       OnClick="HandleClickEditTienThieu"
+                       Icon="@Icons.Material.Filled.Edit">
+            >
+        </MudIconButton>
+    </td>
+}
+else
+{
+    <td style="display: flex; align-items: center;">
+        <MudItem sm="6" md="4">
+            <MudTextField @bind-Value="_Tien"
+                          InputType="InputType.Number"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          AutoFocus="true"
+                          Immediate="true">
+            </MudTextField>
+        </MudItem>
+        <MudIconButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       Class="ml-2"
+                       OnClick="EditTienThieu"
+                       Icon="@Icons.Material.Filled.Check">
+            >
+        </MudIconButton>
+
+        <MudIconButton Variant="Variant.Filled"
+                       Class="ml-2"
+                       OnClick="HandleClickEditTienThieu"
+                       Icon="@Icons.Material.Filled.Cancel">
+        </MudIconButton>
+    </td>
+}
+<td></td>
+<td>
+    <MudIconButton Variant="Variant.Filled"
+                   Color="Color.Error"
+                   OnClick="DeleteUserThieu"
+                   Icon="@Icons.Material.Filled.Delete">
+    </MudIconButton>
+</td>
+
+@code {
+    [Parameter]
+    public UserThieu userThieu { get; set; }
+    [Parameter]
+    public EventCallback<string> OnEventChange { get; set; }
+
+    bool isEditingTienThieu { get; set; } = false;
+    int tempTien { get; set; }
+    int _Tien { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _Tien = userThieu.tienThieu;
+    }
+
+    //when user click Edit button
+    void HandleClickEditTienThieu()
+    {
+        if (!isEditingTienThieu)
+        {
+            isEditingTienThieu = true;
+            tempTien = _Tien;
+        }
+        else
+        {
+            _Tien = tempTien;
+            isEditingTienThieu = false;
+        }
+    }
+
+    //when user click OK -> EDIT
+    async void EditTienThieu()
+    {
+        userThieu.tienThieu = _Tien;
+
+        bool result = await orderRiceService.UpdateUserThieuAsync(userThieu);
+        if (result)
+        {
+            isEditingTienThieu = false;
+            await OnEventChange.InvokeAsync(userThieu.id);
+        }
+        else
+        {
+            //TODO: show message error: edit that bai
+        }
+    }
+
+    async void DeleteUserThieu()
+    {
+        bool result = await orderRiceService.DeleteUserThieuAsync(userThieu.id);
+        if (result)
+        {
+            await OnEventChange.InvokeAsync(userThieu.id);
+        }
+        else
+        {
+            //TODO: show message error: delete that bai
+        }
+    }
+}

@@ -8,75 +8,99 @@
 @inject IDialogService Dialog
 
 <MudText Typo="Typo.h3" Align="Align.Center">Admin</MudText>
-<hr />
-<MudPaper Square="true">
-    <MudContainer Style="display: flex; justify-content: center;">
-        <div>
-            @if (!isLogin)
+
+<MudGrid>
+    @if (!isLogin)
+    {
+        <div style="display: flex; justify-content: center;">
+            <MudItem xs="12">
+                <MudTextField @bind-Value="Key"
+                                Label="Login"
+                                InputType="InputType.Password"
+                                Variant="Variant.Outlined"
+                                Margin="Margin.Dense"
+                                Immediate="true"
+                                AutoFocus="true"
+                                OnKeyPress="KeyPressLogin">
+                </MudTextField>
+            </MudItem>
+            <MudButton Variant="Variant.Filled"
+                        Style="background-color: green; color: white;" Class="ml-2"
+                        OnClick="HandleAdminLogin">
+                Login
+            </MudButton>
+        </div>
+    }
+    else
+    {
+        <MudItem xs="12" md="3">
+            <div>
+                <MudTextField @bind-Value="GiaCom"
+                            Label="Giá cơm"
+                            InputType="InputType.Text"
+                            Variant="Variant.Text"
+                            Margin="Margin.Dense"
+                            Immediate="true">
+                </MudTextField>
+                <MudTextField @bind-Value="GiaDoAn"
+                            Label="Giá đồ ăn"
+                            InputType="InputType.Text"
+                            Variant="Variant.Text"
+                            Margin="Margin.Dense"
+                            Immediate="true">
+                </MudTextField>
+            </div>
+        </MudItem>
+
+        <MudItem xs="12" md="9">
+            <AddMenu GiaCom="@GiaCom" GiaDoAn="@GiaDoAn" OnEventChange="@OnEventChangeDish" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <ListUserThieu UserThieus="@userThieus" OnEventChange="@OnEventChangeUserThieus"/>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            @if (dishs.Count > 0)
             {
-                <div style="display: inline-flex; justify-content: center;">
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="Key"
-                                      Label="Login"
-                                      InputType="InputType.Password"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense"
-                                      Immediate="true"
-                                      AutoFocus="true"
-                                      OnKeyPress="KeyPressLogin">
-                        </MudTextField>
-                    </MudItem>
+               <ListMenu Dishs="@dishs" OnEventChange="@OnEventChangeDish" />
+            }
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <ListUser Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudText Typo="Typo.h5" Align="Align.Center">&nbsp;</MudText>
+            @if (users.Count > 0)
+            {
+               <ReportTable Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
+            }
+            @if (dishs.Count > 0 || users.Count > 0)
+            {
+                <div style="display: flex; justify-content: space-between; align-items:flex-end; flex-wrap: nowrap;">
                     <MudButton Variant="Variant.Filled"
-                               Style="background-color: green; color: white;" Class="ml-2"
-                               OnClick="HandleAdminLogin">
-                        Login
+                        Color="Color.Info"
+                        FullWidth="true"
+                        Class="mr-1"
+                        OnClick="@(() => { OnEventChangeUser("_"); })">
+                        Check Update Order
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled"
+                            Color="Color.Error"
+                            FullWidth="true"
+                            OnClick="HandleDeleteAllMenuAllUser">
+                        Delete All Menu, All User
                     </MudButton>
                 </div>
             }
-            else
-            {
-                <div style="display: inline-flex; justify-content: center;">
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="GiaCom"
-                                      Label="Giá cơm"
-                                      InputType="InputType.Text"
-                                      Variant="Variant.Text"
-                                      Margin="Margin.Dense"
-                                      Immediate="true">
-                        </MudTextField>
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="GiaDoAn"
-                                      Label="Giá đồ ăn"
-                                      InputType="InputType.Text"
-                                      Variant="Variant.Text"
-                                      Margin="Margin.Dense"
-                                      class="ml-1"
-                                      Immediate="true">
-                        </MudTextField>
-                    </MudItem>
-                </div>
-                <AddMenu GiaCom="@GiaCom" GiaDoAn="@GiaDoAn" OnEventChange="@OnEventChangeDish" />
-                <ListMenu Dishs="@dishs" OnEventChange="@OnEventChangeDish" />
-                <ListUser Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
-                <ReportTable @ref="_reportTable" Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Error"
-                           Class="ma-2"
-                           OnClick="HandleDeleteAllMenuAllUser">
-                    Delete All Menu, All User Order
-                </MudButton>
-            }
-        </div>
-    </MudContainer>
-</MudPaper>
-
+        </MudItem>
+    }
+</MudGrid>
 
 @code {
     int GiaCom { get; set; } = 22;
     int GiaDoAn { get; set; } = 18;
 
-    ReportTable _reportTable;
     string Password { get; set; } = "a";
 
     string Key { get; set; }
@@ -84,11 +108,13 @@
 
     List<Dish> dishs;
     List<User> users;
+    List<UserThieu> userThieus;
 
     protected override async Task OnInitializedAsync()
     {
         dishs = await orderRiceService.GetDishAsync();
         users = await orderRiceService.GetUserAsync();
+        userThieus = await orderRiceService.GetUserThieuAsync();
     }
 
     void KeyPressLogin(KeyboardEventArgs e)
@@ -110,29 +136,31 @@
             @*TODO: show message sai password*@
         }
     }
-    void HandleEditGia()
-    {
-
-    }
 
     async void OnEventChangeDish(string idDish)
     {
         dishs = new();
         dishs = await orderRiceService.GetDishAsync();
-        _reportTable.Refresh();
     }
 
     async void OnEventChangeUser(string idUser)
     {
+        userThieus = new();
+        userThieus = await orderRiceService.GetUserThieuAsync();
         users = new();
         users = await orderRiceService.GetUserAsync();
-        _reportTable.Refresh();
+    }
+
+    async void OnEventChangeUserThieus()
+    {
+        userThieus = new();
+        userThieus = await orderRiceService.GetUserThieuAsync();
     }
 
     async void HandleDeleteAllMenuAllUser()
     {
         var parameters = new DialogParameters();
-        parameters.Add("ContentText", "Do you really want to delete Menu and User Order?");
+        parameters.Add("ContentText", "Bạn có thật sự muốn xoá hết Menu và User Order? - những user thiếu tiền sẽ được lưu trữ lại và thêm vào bảng con nợ!");
         parameters.Add("ButtonText", "Delete");
         parameters.Add("Color", Color.Error);
 
@@ -142,11 +170,26 @@
         var result = await dialog.Result;
         if (!result.Cancelled)
         {
+            //check and add user thieu tien to UserThieu db
+            List<UserThieu> UserThieus = new();
+            foreach (var user in users.Where(c => c.tienDaNhan < c.tongTien))
+            {
+                UserThieu tempUserThieu = new UserThieu()
+                {
+                    id = user.id,
+                    name = user.name,
+                    tienThieu = user.tongTien - user.tienDaNhan
+                };
+                UserThieus.Add(tempUserThieu);
+            }
+            await orderRiceService.AddUserThieuAsync(UserThieus); await orderRiceService.DeleteAllDishAsync();
+            //delete all
             await orderRiceService.DeleteAllDishAsync();
             await orderRiceService.DeleteAllUserAsync();
             dishs = new();
             users = new();
-            _reportTable.Refresh();
+            //get lai userThieus, cach khac (concat newUserThieus vao List userThieus khong can get lai tu db)
+            userThieus = await orderRiceService.GetUserThieuAsync();
             StateHasChanged();
         }
     }

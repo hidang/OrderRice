@@ -74,6 +74,25 @@ namespace OrderRice.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("OrderRice.Model.UserThieu", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ngayThieu")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("tienThieu")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("id");
+
+                    b.ToTable("UserThieu");
+                });
+
             modelBuilder.Entity("DishUser", b =>
                 {
                     b.HasOne("OrderRice.Model.Dish", null)

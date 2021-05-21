@@ -37,6 +37,20 @@ namespace OrderRice.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserThieu",
+                columns: table => new
+                {
+                    id = table.Column<string>(type: "TEXT", nullable: false),
+                    name = table.Column<string>(type: "TEXT", nullable: true),
+                    tienThieu = table.Column<int>(type: "INTEGER", nullable: false),
+                    ngayThieu = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserThieu", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DishUser",
                 columns: table => new
                 {
@@ -70,6 +84,9 @@ namespace OrderRice.Migrations
         {
             migrationBuilder.DropTable(
                 name: "DishUser");
+
+            migrationBuilder.DropTable(
+                name: "UserThieu");
 
             migrationBuilder.DropTable(
                 name: "Dish");

@@ -1,0 +1,32 @@
+@using OrderRice.Model
+@using OrderRice.Service
+@inject OrderRiceService orderRiceService
+
+@if(UserThieus.Count > 0)
+{
+  <table class="table">
+    <thead>
+        <tr>
+            <th>Con nợ</th>
+            <th>Tiền thiếu</th>
+            <th>Ngày thiếu</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+      @foreach (var userThieu in UserThieus)
+      {
+        <tr>
+            <UserThieuItem UserThieu="@userThieu" OnEventChange="@OnEventChange" />
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+@code {
+    [Parameter]
+    public List<UserThieu> UserThieus { get; set; }
+    [Parameter]
+    public EventCallback<string> OnEventChange { get; set; }
+}

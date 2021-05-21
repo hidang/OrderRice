@@ -37,13 +37,10 @@
         </MudDrawerHeader>
         <NavMenu/>
     </MudDrawer>
-    <MudMainContent Class="mudblazor-main-content">
-        <MudContainer MaxWidth="MaxWidth.Large">
-            @Body
-        </MudContainer>
-
+    <MudMainContent Class="px-6">
+        @Body
         <MudScrollToTop TopOffset="400">
-            <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+            <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Success" />
         </MudScrollToTop>
     </MudMainContent>
 

@@ -1,30 +1,38 @@
 ﻿@using OrderRice.Model
 @using OrderRice.Pages.Admin.Components 
 
-<MudText Typo="Typo.h5" Align="Align.Center">Thiếu tiền</MudText>
-<TableUser>
-    @foreach (var user in Users.Where(c => c.tienDaNhan < c.tongTien))
-    {
-        <UserItem User="@user" OnEventChange="@OnEventChange" />
-    }
-</TableUser>
+@if(thieuTiens.ToList().Count > 0)
+{
+    <MudText Typo="Typo.h5" Align="Align.Center">Thiếu tiền</MudText>
+    <TableUser>
+        @foreach (var user in thieuTiens)
+        {
+            <UserItem User="@user" OnEventChange="@OnEventChange" />
+        }
+    </TableUser>
+}
 
-<MudText Typo="Typo.h5" Align="Align.Center">Thối tiền</MudText>
-<TableUser>
-    @foreach (var user in Users.Where(c => c.tienDaNhan > c.tongTien))
-    {
-        <UserItem User="@user" OnEventChange="@OnEventChange" />
-    }
-</TableUser>
+@if(thoiTiens.ToList().Count > 0)
+{
+    <MudText Typo="Typo.h5" Align="Align.Center">Thối tiền</MudText>
+    <TableUser>
+        @foreach (var user in thoiTiens)
+        {
+            <UserItem User="@user" OnEventChange="@OnEventChange" />
+        }
+    </TableUser>
+}
 
-<MudText Typo="Typo.h5" Align="Align.Center">Đưa đủ</MudText>
-<TableUser>
-    @foreach (var user in Users.Where(c => c.tienDaNhan == c.tongTien))
-    {
-        <UserItem User="@user" OnEventChange="@OnEventChange" />
-    }
-</TableUser>
-
+@if(duaDus.ToList().Count > 0)
+{
+    <MudText Typo="Typo.h5" Align="Align.Center">Đưa đủ</MudText>
+    <TableUser>
+        @foreach (var user in duaDus)
+        {
+            <UserItem User="@user" OnEventChange="@OnEventChange" />
+        }
+    </TableUser>
+}
 
 @code {
     [Parameter]
@@ -33,4 +41,15 @@
     public List<User> Users { get; set; }
     [Parameter]
     public EventCallback<string> OnEventChange { get; set; }
+
+    IEnumerable<User> thieuTiens { get; set; }
+    IEnumerable<User> thoiTiens { get; set; }
+    IEnumerable<User> duaDus { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        thieuTiens = Users.Where(c => c.tienDaNhan < c.tongTien);
+        thoiTiens = Users.Where(c => c.tienDaNhan > c.tongTien);
+        duaDus = Users.Where(c => c.tienDaNhan == c.tongTien);
+    }
 }
