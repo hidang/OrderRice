@@ -34,7 +34,7 @@
     else
     {
         <MudItem xs="12" md="3">
-            <div>
+            <div style="display: flex;">
                 <MudTextField @bind-Value="GiaCom"
                             Label="Giá cơm"
                             InputType="InputType.Text"
@@ -50,21 +50,23 @@
                             Immediate="true">
                 </MudTextField>
             </div>
-        </MudItem>
-
-        <MudItem xs="12" md="9">
             <AddMenu GiaCom="@GiaCom" GiaDoAn="@GiaDoAn" OnEventChange="@OnEventChangeDish" />
         </MudItem>
-        <MudItem xs="12" md="6">
-            <ListUserThieu UserThieus="@userThieus" OnEventChange="@OnEventChangeUserThieus"/>
-        </MudItem>
-
         <MudItem xs="12" md="6">
             @if (dishs.Count > 0)
             {
                <ListMenu Dishs="@dishs" OnEventChange="@OnEventChangeDish" />
+            } else
+            {
+                <MudText Typo="Typo.h6" Align="Align.Center">Chưa có bất kì món ăn nào!</MudText>
             }
         </MudItem>
+
+        <MudItem xs="12" md="3">
+            <ListUserThieu UserThieus="@userThieus" OnEventChange="@OnEventChangeUserThieus"/>
+        </MudItem>
+
+
 
         <MudItem xs="12" md="6">
             <ListUser Dishs="@dishs" Users="@users" OnEventChange="@OnEventChangeUser" />
@@ -101,7 +103,7 @@
     int GiaCom { get; set; } = 22;
     int GiaDoAn { get; set; } = 18;
 
-    string Password { get; set; } = "a";
+    string Password { get; set; } = "b";
 
     string Key { get; set; }
     bool isLogin { get; set; } = false;

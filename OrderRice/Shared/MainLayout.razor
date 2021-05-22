@@ -39,9 +39,9 @@
     </MudDrawer>
     <MudMainContent Class="px-6">
         @Body
-        <MudScrollToTop TopOffset="400">
+        @* <MudScrollToTop TopOffset="400">
             <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Success" />
-        </MudScrollToTop>
+        </MudScrollToTop> *@
     </MudMainContent>
 
 </MudLayout>
@@ -89,7 +89,7 @@
         {
             Palette = new Palette()
             {
-                Black = "#272c34"
+                Primary = Colors.Green.Default,
             }
         };
     private readonly MudTheme _darkTheme =

@@ -10,10 +10,10 @@
         </tr>
     </thead>
     <tbody>
-            @foreach (var dish in Dishs)
-            {
-                <MenuItem Dish="@dish" OnEventChange="@OnEventChange" />
-            }
+        @foreach (var dish in Dishs)
+        {
+            <MenuItem Dish="@dish" OnEventChange="@OnEventChange" />
+        }
     </tbody>
 </table>
 @code {
