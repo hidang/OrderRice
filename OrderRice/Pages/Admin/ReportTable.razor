@@ -15,11 +15,11 @@
         </tr>
         <tr>
             <td>Tiền cần thối:</td>
-            <td>@TienCanThoi</td>
+            <td>@strTienCanThoi</td>
         </tr>
         <tr>
             <td><b>Số lượng:</b></td>
-            <td>@SoLuongDish phần cơm, @SoLuongDishPlus đồ ăn thêm</td>
+            <td>@SoLuongDish phần cơm@(SoLuongDishPlus == 0? "": $", {SoLuongDishPlus} đồ ăn thêm")</td>
         </tr>
         <tr>
             <td><b>Tổng bill:</b></td>
@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <td><b>Còn thiếu:</b></td>
-            <td>@(TongBill - TienDaNhan < 0? 0: TongBill - TienDaNhan)k</td>
+            <td>@(TongBill - TienDaNhan + TongTienThoi < 0? 0: TongBill - TienDaNhan + TongTienThoi)k</td>
         </tr>
         <tr>
             <td><b>Output:</b></td>
@@ -57,8 +57,10 @@
     int TongBill { get; set; } = 0;
     string strOutput { get; set; } = "";
     int SoLuongDish { get; set; } = 0;
-    string TienCanThoi { get; set; } = "";
+    string strTienCanThoi { get; set; } = "";
     int SoLuongDishPlus { get; set; } = 0;
+    int TongTienThoi { get; set; } = 0;
+    int tempTienThoi;
 
     void CreateReport()
     {
@@ -67,11 +69,12 @@
         strOutput = "";
         SoLuongDish = 0;
         SoLuongDishPlus = 0;
-        TienCanThoi = "";
+        strTienCanThoi = "";
+        TongTienThoi = 0;
 
         List<string> nameDishs = new();
         List<string> nameDishsPlus = new();
-        int tempTienThoi;
+
         foreach (var user in Users)
         {
             TienDaNhan += user.tienDaNhan;
@@ -92,7 +95,10 @@
                 }
             tempTienThoi = user.tienDaNhan - user.tongTien;
             if (tempTienThoi > 0)
-                TienCanThoi += user.name + ": " + tempTienThoi.ToString() + "k | ";
+            {
+                strTienCanThoi += user.name + ": " + tempTienThoi.ToString() + "k | ";
+                TongTienThoi += tempTienThoi;
+            }
         }
         @*var userDishOrderd = Users.SelectMany(c => c.dish.Split(','));*@
         var distCount = nameDishs.GroupBy(c => c).Select(c => $"{c.Count()} phần {c.Key}");
@@ -113,9 +119,4 @@
     {
         await JSRuntime.InvokeVoidAsync("CopyToClipboard", strOutput);
     }
-
-    @*public void Refresh()
-    {
-        CreateReport();
-    }*@
 }
